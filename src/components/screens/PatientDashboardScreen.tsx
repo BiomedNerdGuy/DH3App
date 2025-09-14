@@ -183,7 +183,7 @@ export function PatientDashboardScreen({ patientId, onBack }: PatientDashboardSc
                 fill="none"
                 stroke="#0d9488"
                 strokeWidth="3"
-                points="0,70 25,75 50,80 75,60 100,72"
+                points="0,59 25,63 50,70 75,56 100,64"
               />
               
               {/* Episode markers */}
