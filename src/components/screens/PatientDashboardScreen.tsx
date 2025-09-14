@@ -182,82 +182,54 @@ export function PatientDashboardScreen({ patientId, onBack }: PatientDashboardSc
 
       {/* Heart Rate & Episode Graph */}
       <Card className="p-6">
-        <h3 className="text-lg font-semibold text-gray-900 mb-4">Heart Rate & Episode Timing</h3>
-        
-        {/* Graph Container */}
-        <div className="relative h-64 bg-gray-50 rounded-lg p-4">
-          {/* Y-axis labels */}
-          <div className="absolute left-0 top-0 h-full flex flex-col justify-between text-xs text-gray-500 py-4">
-            <span>140</span>
-            <span>120</span>
-            <span>100</span>
-            <span>80</span>
-            <span>60</span>
+        {/* Blank Graph Container */}
+        <div className="relative h-80 bg-gray-50 rounded-lg border-2 border-gray-200">
+          {/* Y-axis */}
+          <div className="absolute left-4 top-4 bottom-16 flex flex-col justify-between">
+            <span className="text-xs text-gray-600 font-medium">140</span>
+            <span className="text-xs text-gray-600 font-medium">120</span>
+            <span className="text-xs text-gray-600 font-medium">100</span>
+            <span className="text-xs text-gray-600 font-medium">80</span>
+            <span className="text-xs text-gray-600 font-medium">60</span>
           </div>
           
-          {/* Graph area */}
-          <div className="ml-8 h-full relative">
-            {/* Grid lines */}
-            <div className="absolute inset-0">
-              {[0, 1, 2, 3, 4].map(i => (
-                <div key={i} className="absolute w-full border-t border-gray-200" style={{ top: `${i * 25}%` }}></div>
-              ))}
-            </div>
-            
-            {/* Data points and lines */}
-            <svg className="absolute inset-0 w-full h-full" viewBox="0 0 120 100" preserveAspectRatio="none">
-              {/* Continuous HR line */}
-              <polyline
-                fill="none"
-                stroke="#0d9488"
-                strokeWidth="0.3"
-                points={heartRateData.map((point, index) => {
-                  const dayIndex = Math.floor(index / 2000); // 2000 points per day
-                  const x = (dayIndex * 30) + ((index % 2000) / 2000) * 30; // 30 units per day
-                  const y = ((140 - point.heartRate) / 80) * 100; // Map 60-140 to 100-0
-                  return `${x},${y}`;
-                }).join(' ')}
-              />
-              
-              {/* Episode markers */}
-              {patient.episodes.map((episode, index) => {
-                const x = index * 30 + 15; // Center of each day (15, 45, 75, 105, 135)
-                const y = ((140 - episode.heartRate) / 80) * 100;
-                
-                return (
-                  <circle 
-                    key={episode.id}
-                    cx={x} 
-                    cy={y} 
-                    r="2" 
-                    fill="#f59e0b" 
-                    stroke="#ffffff" 
-                    strokeWidth="1" 
-                  />
-                );
-              })}
-            </svg>
-            
-            {/* X-axis labels */}
-            <div className="absolute bottom-0 w-full flex justify-between text-xs text-gray-500 transform translate-y-6">
-              {patient.continuousHeartRateData.map(data => (
-                <span key={data.date}>
-                  {new Date(data.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
-                </span>
-              ))}
-            </div>
+          {/* Y-axis label */}
+          <div className="absolute left-1 top-1/2 transform -translate-y-1/2 -rotate-90">
+            <span className="text-sm font-medium text-gray-700">BPM</span>
           </div>
-        </div>
-        
-        {/* Legend */}
-        <div className="flex items-center justify-center space-x-6 mt-6 text-sm">
-          <div className="flex items-center space-x-2">
-            <div className="w-4 h-0.5 bg-teal-600"></div>
-            <span>Continuous HR</span>
+          
+          {/* X-axis */}
+          <div className="absolute bottom-4 left-16 right-4 flex justify-between">
+            <span className="text-xs text-gray-600 font-medium">Jan 13</span>
+            <span className="text-xs text-gray-600 font-medium">Jan 14</span>
+            <span className="text-xs text-gray-600 font-medium">Jan 15</span>
+            <span className="text-xs text-gray-600 font-medium">Jan 16</span>
+            <span className="text-xs text-gray-600 font-medium">Jan 17</span>
           </div>
-          <div className="flex items-center space-x-2">
-            <div className="w-3 h-3 bg-amber-500 rounded-full"></div>
-            <span>Episodes</span>
+          
+          {/* X-axis label */}
+          <div className="absolute bottom-1 left-1/2 transform -translate-x-1/2">
+            <span className="text-sm font-medium text-gray-700">Date</span>
+          </div>
+          
+          {/* Grid lines */}
+          <div className="absolute left-16 right-4 top-4 bottom-16">
+            {/* Horizontal grid lines */}
+            {[0, 1, 2, 3, 4].map(i => (
+              <div 
+                key={`h-${i}`} 
+                className="absolute w-full border-t border-gray-300" 
+                style={{ top: `${i * 25}%` }}
+              ></div>
+            ))}
+            {/* Vertical grid lines */}
+            {[0, 1, 2, 3, 4].map(i => (
+              <div 
+                key={`v-${i}`} 
+                className="absolute h-full border-l border-gray-300" 
+                style={{ left: `${i * 25}%` }}
+              ></div>
+            ))}
           </div>
         </div>
       </Card>
