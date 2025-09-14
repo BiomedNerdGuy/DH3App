@@ -4,6 +4,7 @@ import { AppState, Patient, Medication, SupportPartner, CompassResponse } from '
 const initialState: AppState = {
   currentScreen: 'launch',
   isClinicianMode: false,
+  selectedPatientId: undefined,
   onboardingComplete: false,
   deviceConnected: false,
   dailyTests: [],

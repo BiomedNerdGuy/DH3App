@@ -5,6 +5,7 @@ import { LoginScreen } from './components/screens/LoginScreen';
 import { ClinicianCodeScreen } from './components/screens/ClinicianCodeScreen';
 import { ClinicianHomeScreen } from './components/screens/ClinicianHomeScreen';
 import { ClinicianAddPatientScreen } from './components/screens/ClinicianAddPatientScreen';
+import { PatientDashboardScreen } from './components/screens/PatientDashboardScreen';
 import { PatientCodeScreen } from './components/screens/PatientCodeScreen';
 import { PrivacyScreen } from './components/screens/PrivacyScreen';
 import { PatientInfoScreen } from './components/screens/PatientInfoScreen';
@@ -94,8 +95,12 @@ function App() {
   };
 
   const handlePatientSelect = (patientId: string) => {
-    // TODO: Load patient data and switch to patient view
+    // Load patient data and switch to patient dashboard
     console.log('Selected patient:', patientId);
+    updateState({ 
+      currentScreen: 'patient-dashboard',
+      selectedPatientId: patientId 
+    });
   };
 
   const handleAddNewPatient = () => {
@@ -357,6 +362,14 @@ function App() {
         <ClinicianAddPatientScreen 
           onPatientCodeSubmit={handlePatientCodeSubmit}
           onBack={handleBack}
+        />
+      );
+
+    case 'patient-dashboard':
+      return (
+        <PatientDashboardScreen 
+          patientId={state.selectedPatientId || ''}
+          onBack={() => setCurrentScreen('clinician-home')}
         />
       );
 

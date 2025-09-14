@@ -82,6 +82,7 @@ export interface AppState {
   patient?: Patient;
   isClinicianMode?: boolean;
   clinicianCode?: string;
+  selectedPatientId?: string;
   onboardingComplete: boolean;
   deviceConnected: boolean;
   currentEpisode?: Episode;
