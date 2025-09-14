@@ -47,18 +47,16 @@ const mockPatientData: PatientData = {
   episodeCount: 12,
   heartRateRange: { min: 65, max: 125 },
   continuousHeartRateData: [
-    { date: '2024-01-15', averageHR: 82, minHR: 65, maxHR: 115 },
-    { date: '2024-01-16', averageHR: 79, minHR: 68, maxHR: 108 },
-    { date: '2024-01-17', averageHR: 76, minHR: 62, maxHR: 102 },
-    { date: '2024-01-18', averageHR: 85, minHR: 70, maxHR: 125 },
-    { date: '2024-01-19', averageHR: 78, minHR: 66, maxHR: 107 },
-    { date: '2024-01-20', averageHR: 81, minHR: 69, maxHR: 118 },
-    { date: '2024-01-21', averageHR: 77, minHR: 64, maxHR: 112 }
+    { date: '2024-01-14', averageHR: 82, minHR: 65, maxHR: 115 },
+    { date: '2024-01-15', averageHR: 79, minHR: 68, maxHR: 108 },
+    { date: '2024-01-16', averageHR: 76, minHR: 62, maxHR: 102 },
+    { date: '2024-01-17', averageHR: 85, minHR: 70, maxHR: 125 },
+    { date: '2024-01-18', averageHR: 78, minHR: 66, maxHR: 107 }
   ],
   episodes: [
     {
       id: '1',
-      date: '2024-01-15',
+      date: '2024-01-14',
       time: '09:30 AM',
       duration: '25 min',
       symptoms: ['Dizziness', 'Palpitations', 'Fatigue'],
@@ -68,7 +66,7 @@ const mockPatientData: PatientData = {
     },
     {
       id: '2',
-      date: '2024-01-15',
+      date: '2024-01-14',
       time: '02:15 PM',
       duration: '18 min',
       symptoms: ['Lightheaded', 'Nausea'],
@@ -78,7 +76,7 @@ const mockPatientData: PatientData = {
     },
     {
       id: '3',
-      date: '2024-01-16',
+      date: '2024-01-15',
       time: '11:45 AM',
       duration: '32 min',
       symptoms: ['Dizziness', 'Brain Fog', 'Tremor'],
@@ -88,7 +86,7 @@ const mockPatientData: PatientData = {
     },
     {
       id: '4',
-      date: '2024-01-17',
+      date: '2024-01-16',
       time: '08:20 AM',
       duration: '12 min',
       symptoms: ['Palpitations', 'Chest Pain'],
@@ -97,7 +95,7 @@ const mockPatientData: PatientData = {
     },
     {
       id: '5',
-      date: '2024-01-18',
+      date: '2024-01-17',
       time: '03:45 PM',
       duration: '28 min',
       symptoms: ['Dizziness', 'Fatigue', 'Shortness of Breath'],
@@ -185,15 +183,15 @@ export function PatientDashboardScreen({ patientId, onBack }: PatientDashboardSc
                 fill="none"
                 stroke="#0d9488"
                 strokeWidth="3"
-                points="0,60 14.3,45 28.6,70 42.9,25 57.1,60 71.4,40 85.7,55 100,50"
+                points="0,45 25,65 50,75 75,30 100,55"
               />
               
               {/* Episode markers */}
-              <circle cx="0%" cy="60%" r="4" fill="#f59e0b" stroke="#ffffff" strokeWidth="2" />
-              <circle cx="14.3%" cy="45%" r="4" fill="#f59e0b" stroke="#ffffff" strokeWidth="2" />
-              <circle cx="42.9%" cy="25%" r="4" fill="#f59e0b" stroke="#ffffff" strokeWidth="2" />
-              <circle cx="71.4%" cy="40%" r="4" fill="#f59e0b" stroke="#ffffff" strokeWidth="2" />
-              <circle cx="85.7%" cy="55%" r="4" fill="#f59e0b" stroke="#ffffff" strokeWidth="2" />
+              <circle cx="0%" cy="45%" r="4" fill="#f59e0b" stroke="#ffffff" strokeWidth="2" />
+              <circle cx="0%" cy="65%" r="4" fill="#f59e0b" stroke="#ffffff" strokeWidth="2" />
+              <circle cx="25%" cy="65%" r="4" fill="#f59e0b" stroke="#ffffff" strokeWidth="2" />
+              <circle cx="50%" cy="75%" r="4" fill="#f59e0b" stroke="#ffffff" strokeWidth="2" />
+              <circle cx="75%" cy="30%" r="4" fill="#f59e0b" stroke="#ffffff" strokeWidth="2" />
             </svg>
             
             {/* X-axis labels */}
