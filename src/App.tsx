@@ -64,6 +64,9 @@ function App() {
     updateState
   } = useAppState();
 
+  // Debug: Log current screen state
+  console.log('Current screen:', state.currentScreen);
+
   const handleLogin = () => {
     setCurrentScreen('login');
   };
@@ -73,7 +76,9 @@ function App() {
   };
 
   const handleClinicianLogin = () => {
+    console.log('handleClinicianLogin called');
     updateState({ currentScreen: 'clinician-code' });
+    console.log('State update called with clinician-code');
   };
 
   const handleLoginSubmit = (email: string, password: string) => {
