@@ -20,6 +20,31 @@ const initialState: AppState = {
 export function useAppState() {
   const [state, setState] = useState<AppState>(initialState);
 
+  const loginUser = useCallback(() => {
+    updateState({ 
+      onboardingComplete: true, 
+      currentScreen: 'home',
+      // Simulate returning user with some existing data
+      currentDay: 3, // Example: user is on day 3
+      dailyTests: [
+        {
+          id: '1',
+          date: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
+          completed: true,
+          heartRateReadings: [],
+          notes: 'Day 1 baseline test completed'
+        },
+        {
+          id: '2', 
+          date: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
+          completed: true,
+          heartRateReadings: [],
+          notes: 'Day 2 baseline test completed'
+        }
+      ]
+    });
+  }, [updateState]);
+
   const updateState = useCallback((updates: Partial<AppState>) => {
     setState(prev => ({ ...prev, ...updates }));
   }, []);
@@ -228,6 +253,7 @@ export function useAppState() {
     state,
     updateState,
     setCurrentScreen,
+    loginUser,
     setPatient,
     setMedications,
     setSupportPartner,

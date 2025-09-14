@@ -1,6 +1,7 @@
 import React from 'react';
 import { useAppState } from './hooks/useAppState';
 import { LaunchScreen } from './components/screens/LaunchScreen';
+import { LoginScreen } from './components/screens/LoginScreen';
 import { PatientCodeScreen } from './components/screens/PatientCodeScreen';
 import { PrivacyScreen } from './components/screens/PrivacyScreen';
 import { PatientInfoScreen } from './components/screens/PatientInfoScreen';
@@ -30,6 +31,7 @@ function App() {
   const { 
     state, 
     setCurrentScreen, 
+    loginUser,
     setPatient,
     setMedications,
     setSupportPartner,
@@ -57,12 +59,17 @@ function App() {
   } = useAppState();
 
   const handleLogin = () => {
-    // TODO: Implement login flow
-    console.log('Login flow not implemented yet');
+    setCurrentScreen('login');
   };
 
   const handleNewUser = () => {
     setCurrentScreen('patient-code');
+  };
+
+  const handleLoginSubmit = (email: string, password: string) => {
+    // TODO: Validate credentials with backend
+    console.log('Login attempt:', email);
+    loginUser();
   };
 
   const handleCodeSubmit = (code: string) => {
@@ -203,6 +210,9 @@ function App() {
       case 'patient-code':
         setCurrentScreen('launch');
         break;
+      case 'login':
+        setCurrentScreen('launch');
+        break;
       case 'privacy':
         setCurrentScreen('patient-code');
         break;
@@ -272,6 +282,14 @@ function App() {
         <LaunchScreen 
           onLogin={handleLogin}
           onNewUser={handleNewUser}
+        />
+      );
+
+    case 'login':
+      return (
+        <LoginScreen 
+          onLogin={handleLoginSubmit}
+          onBack={handleBack}
         />
       );
 
