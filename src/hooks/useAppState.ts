@@ -3,6 +3,7 @@ import { AppState, Patient, Medication, SupportPartner, CompassResponse } from '
 
 const initialState: AppState = {
   currentScreen: 'launch',
+  isClinicianMode: false,
   onboardingComplete: false,
   deviceConnected: false,
   dailyTests: [],
@@ -51,6 +52,20 @@ export function useAppState() {
 
   const setCurrentScreen = useCallback((screen: string) => {
     updateState({ currentScreen: screen });
+  }, [updateState]);
+
+  const loginClinician = useCallback((code: string) => {
+    updateState({ 
+      isClinicianMode: true,
+      clinicianCode: code,
+      currentScreen: 'clinician-home'
+    });
+  }, [updateState]);
+
+  const addPatientToClinician = useCallback((patientCode: string) => {
+    // TODO: Add patient to clinician's patient list
+    console.log('Adding patient with code:', patientCode);
+    updateState({ currentScreen: 'clinician-home' });
   }, [updateState]);
 
   const setPatient = useCallback((patient: Patient) => {
@@ -253,6 +268,8 @@ export function useAppState() {
     state,
     updateState,
     setCurrentScreen,
+    loginClinician,
+    addPatientToClinician,
     loginUser,
     setPatient,
     setMedications,

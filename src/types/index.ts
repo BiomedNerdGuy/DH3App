@@ -80,6 +80,8 @@ export interface DailyTest {
 export interface AppState {
   currentScreen: string;
   patient?: Patient;
+  isClinicianMode?: boolean;
+  clinicianCode?: string;
   onboardingComplete: boolean;
   deviceConnected: boolean;
   currentEpisode?: Episode;

@@ -2,6 +2,9 @@ import React from 'react';
 import { useAppState } from './hooks/useAppState';
 import { LaunchScreen } from './components/screens/LaunchScreen';
 import { LoginScreen } from './components/screens/LoginScreen';
+import { ClinicianCodeScreen } from './components/screens/ClinicianCodeScreen';
+import { ClinicianHomeScreen } from './components/screens/ClinicianHomeScreen';
+import { ClinicianAddPatientScreen } from './components/screens/ClinicianAddPatientScreen';
 import { PatientCodeScreen } from './components/screens/PatientCodeScreen';
 import { PrivacyScreen } from './components/screens/PrivacyScreen';
 import { PatientInfoScreen } from './components/screens/PatientInfoScreen';
@@ -31,6 +34,8 @@ function App() {
   const { 
     state, 
     setCurrentScreen, 
+    loginClinician,
+    addPatientToClinician,
     loginUser,
     setPatient,
     setMedications,
@@ -66,10 +71,35 @@ function App() {
     setCurrentScreen('patient-code');
   };
 
+  const handleClinicianLogin = () => {
+    setCurrentScreen('clinician-code');
+  };
+
   const handleLoginSubmit = (email: string, password: string) => {
     // TODO: Validate credentials with backend
     console.log('Login attempt:', email);
     loginUser();
+  };
+
+  const handleClinicianCodeSubmit = (code: string) => {
+    // TODO: Validate clinician code with backend
+    console.log('Clinician code:', code);
+    loginClinician(code);
+  };
+
+  const handlePatientSelect = (patientId: string) => {
+    // TODO: Load patient data and switch to patient view
+    console.log('Selected patient:', patientId);
+  };
+
+  const handleAddNewPatient = () => {
+    setCurrentScreen('clinician-add-patient');
+  };
+
+  const handlePatientCodeSubmit = (code: string) => {
+    // TODO: Validate patient code and add to clinician's list
+    console.log('Adding patient code:', code);
+    addPatientToClinician(code);
   };
 
   const handleCodeSubmit = (code: string) => {
@@ -212,6 +242,12 @@ function App() {
         break;
       case 'login':
         setCurrentScreen('launch');
+        break;
+      case 'clinician-code':
+        setCurrentScreen('launch');
+        break;
+      case 'clinician-add-patient':
+        setCurrentScreen('clinician-home');
         break;
       case 'privacy':
         setCurrentScreen('patient-code');

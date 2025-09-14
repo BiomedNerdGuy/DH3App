@@ -51,6 +51,15 @@ export function LaunchScreen({ onLogin, onNewUser }: LaunchScreenProps) {
             >
               Returning Patient - Login
             </Button>
+            
+            <Button 
+              onClick={onClinicianLogin}
+              variant="secondary" 
+              size="lg" 
+              className="w-full"
+            >
+              Clinician Login - Enter Code
+            </Button>
           </div>
 
           <div className="flex items-center justify-center space-x-2 text-xs text-gray-500">
