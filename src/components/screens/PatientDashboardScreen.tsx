@@ -194,7 +194,7 @@ export function PatientDashboardScreen({ patientId, onBack }: PatientDashboardSc
           </div>
           
           {/* Y-axis label */}
-          <div className="absolute left-1 top-1/2 transform -translate-y-1/2 -rotate-90">
+          <div className="absolute left-0 top-1/2 transform -translate-y-1/2 -rotate-90">
             <span className="text-sm font-medium text-gray-700">BPM</span>
           </div>
           
@@ -208,7 +208,7 @@ export function PatientDashboardScreen({ patientId, onBack }: PatientDashboardSc
           </div>
           
           {/* X-axis label */}
-          <div className="absolute bottom-1 left-1/2 transform -translate-x-1/2">
+          <div className="absolute bottom-0 left-1/2 transform -translate-x-1/2">
             <span className="text-sm font-medium text-gray-700">Date</span>
           </div>
           
