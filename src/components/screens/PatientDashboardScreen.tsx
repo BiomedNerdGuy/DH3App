@@ -39,71 +39,99 @@ interface PatientDashboardScreenProps {
 }
 
 // Mock patient data for Emily Rodriguez
+const generateHeartRateData = () => {
+  const data = [];
+  const startDate = new Date('2024-01-13');
+  const totalPoints = 10000;
+  const pointsPerDay = totalPoints / 5;
+  
+  for (let day = 0; day < 5; day++) {
+    const currentDate = new Date(startDate);
+    currentDate.setDate(startDate.getDate() + day);
+    const dateStr = currentDate.toISOString().split('T')[0];
+    
+    for (let point = 0; point < pointsPerDay; point++) {
+      // Generate realistic heart rate with daily variation
+      const timeOfDay = point / pointsPerDay; // 0 to 1
+      const baseHR = 75 + Math.sin(timeOfDay * Math.PI * 2) * 5; // Daily rhythm
+      const noise = (Math.random() - 0.5) * 20; // Random variation
+      const heartRate = Math.max(60, Math.min(140, baseHR + noise));
+      
+      const timestamp = new Date(currentDate);
+      timestamp.setHours(Math.floor(timeOfDay * 24));
+      timestamp.setMinutes(Math.floor((timeOfDay * 24 * 60) % 60));
+      
+      data.push({
+        timestamp: timestamp.toISOString(),
+        date: dateStr,
+        heartRate: Math.round(heartRate),
+        timeOfDay
+      });
+    }
+  }
+  
+  return data;
+};
+
+const heartRateData = generateHeartRateData();
+
+// Find one high heart rate episode per day
+const generateEpisodes = () => {
+  const episodes = [];
+  const dates = ['2024-01-13', '2024-01-14', '2024-01-15', '2024-01-16', '2024-01-17'];
+  
+  dates.forEach((date, dayIndex) => {
+    const dayData = heartRateData.filter(d => d.date === date);
+    // Find the highest heart rate point of the day
+    const highestPoint = dayData.reduce((max, current) => 
+      current.heartRate > max.heartRate ? current : max
+    );
+    
+    const symptoms = [
+      ['Dizziness', 'Palpitations'],
+      ['Lightheaded', 'Fatigue'],
+      ['Dizziness', 'Brain Fog', 'Tremor'],
+      ['Palpitations', 'Chest Pain'],
+      ['Dizziness', 'Shortness of Breath']
+    ];
+    
+    const episode = {
+      id: `episode-${dayIndex + 1}`,
+      date: date,
+      time: new Date(highestPoint.timestamp).toLocaleTimeString('en-US', { 
+        hour: '2-digit', 
+        minute: '2-digit' 
+      }),
+      duration: `${15 + Math.floor(Math.random() * 20)} min`,
+      symptoms: symptoms[dayIndex],
+      severity: Math.min(10, Math.max(6, Math.floor(highestPoint.heartRate / 12))),
+      heartRate: highestPoint.heartRate,
+      timestamp: highestPoint.timestamp
+    };
+    
+    episodes.push(episode);
+  });
+  
+  return episodes;
+};
+
 const mockPatientData: PatientData = {
   id: '3',
   name: 'Emily Rodriguez',
   patientCode: 'ER2024003',
-  averageHeartRate: 78,
-  episodeCount: 12,
+  averageHeartRate: Math.round(heartRateData.reduce((sum, d) => sum + d.heartRate, 0) / heartRateData.length),
+  episodeCount: 5,
   heartRateRange: { min: 65, max: 125 },
-  continuousHeartRateData: [
-    { date: '2024-01-14', averageHR: 82, minHR: 65, maxHR: 115 },
-    { date: '2024-01-15', averageHR: 79, minHR: 68, maxHR: 108 },
-    { date: '2024-01-16', averageHR: 76, minHR: 62, maxHR: 102 },
-    { date: '2024-01-17', averageHR: 85, minHR: 70, maxHR: 125 },
-    { date: '2024-01-18', averageHR: 78, minHR: 66, maxHR: 107 }
-  ],
-  episodes: [
-    {
-      id: '1',
-      date: '2024-01-14',
-      time: '09:30 AM',
-      duration: '25 min',
-      symptoms: ['Dizziness', 'Palpitations', 'Fatigue'],
-      severity: 7,
-      notes: 'Occurred after standing up from bed. Had to sit down immediately.',
-      heartRate: 115
-    },
-    {
-      id: '2',
-      date: '2024-01-14',
-      time: '02:15 PM',
-      duration: '18 min',
-      symptoms: ['Lightheaded', 'Nausea'],
-      severity: 5,
-      notes: 'During grocery shopping. Felt better after sitting in car.',
-      heartRate: 108
-    },
-    {
-      id: '3',
-      date: '2024-01-15',
-      time: '11:45 AM',
-      duration: '32 min',
-      symptoms: ['Dizziness', 'Brain Fog', 'Tremor'],
-      severity: 8,
-      notes: 'Worst episode this week. Had to lie down for 30 minutes.',
-      heartRate: 125
-    },
-    {
-      id: '4',
-      date: '2024-01-16',
-      time: '08:20 AM',
-      duration: '12 min',
-      symptoms: ['Palpitations', 'Chest Pain'],
-      severity: 6,
-      heartRate: 112
-    },
-    {
-      id: '5',
-      date: '2024-01-17',
-      time: '03:45 PM',
-      duration: '28 min',
-      symptoms: ['Dizziness', 'Fatigue', 'Shortness of Breath'],
-      severity: 7,
-      notes: 'Triggered by standing for extended period during work meeting.',
-      heartRate: 118
-    }
-  ],
+  continuousHeartRateData: ['2024-01-13', '2024-01-14', '2024-01-15', '2024-01-16', '2024-01-17'].map(date => {
+    const dayData = heartRateData.filter(d => d.date === date);
+    return {
+      date,
+      averageHR: Math.round(dayData.reduce((sum, d) => sum + d.heartRate, 0) / dayData.length),
+      minHR: Math.min(...dayData.map(d => d.heartRate)),
+      maxHR: Math.max(...dayData.map(d => d.heartRate))
+    };
+  }),
+  episodes: generateEpisodes(),
   compassResults: [
     { category: 'Orthostatic Intolerance', score: 28, maxScore: 40 },
     { category: 'Vasomotor', score: 12, maxScore: 20 },
@@ -177,42 +205,36 @@ export function PatientDashboardScreen({ patientId, onBack }: PatientDashboardSc
             </div>
             
             {/* Data points and lines */}
-            <svg className="absolute inset-0 w-full h-full" viewBox="0 0 100 100" preserveAspectRatio="none">
+            <svg className="absolute inset-0 w-full h-full" viewBox="0 0 120 100" preserveAspectRatio="none">
               {/* Continuous HR line */}
               <polyline
                 fill="none"
                 stroke="#0d9488"
                 strokeWidth="2"
                 points={(() => {
-                  // Map heart rate data to SVG coordinates
-                  // X: 0-100 for 5 days, Y: 0-100 where 0=140bpm, 100=60bpm
-                  const points = patient.continuousHeartRateData.map((data, index) => {
-                    const x = (index / (patient.continuousHeartRateData.length - 1)) * 100;
-                    const y = ((140 - data.averageHR) / (140 - 60)) * 100;
-                    return `${x},${y}`;
-                  });
-                  return points.join(' ');
-                })()}
+                strokeWidth="0.3"
+                points={heartRateData.map((point, index) => {
+                  const dayIndex = Math.floor(index / 2000); // 2000 points per day
+                  const x = (dayIndex * 30) + ((index % 2000) / 2000) * 30; // 30 units per day
+                  const y = ((140 - point.heartRate) / 80) * 100; // Map 60-140 to 100-0
+                  return `${x},${y}`;
+                }).join(' ')}
               />
               
               {/* Episode markers */}
-              {patient.episodes.slice(0, 5).map((episode, index) => {
-                // Calculate position based on episode date and heart rate
-                const episodeDate = new Date(episode.date);
-                const startDate = new Date(patient.continuousHeartRateData[0].date);
-                const daysDiff = Math.floor((episodeDate.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24));
-                const x = (daysDiff / 4) * 100; // 4 days span (0-4 for 5 days)
-                const y = episode.heartRate ? ((140 - episode.heartRate) / (140 - 60)) * 100 : 50;
+              {patient.episodes.map((episode, index) => {
+                const x = index * 30 + 15; // Center of each day (15, 45, 75, 105, 135)
+                const y = ((140 - episode.heartRate) / 80) * 100;
                 
                 return (
                   <circle 
                     key={episode.id}
                     cx={x} 
                     cy={y} 
-                    r="3" 
+                    r="2" 
                     fill="#f59e0b" 
                     stroke="#ffffff" 
-                    strokeWidth="1.5" 
+                    strokeWidth="1" 
                   />
                 );
               })}
@@ -221,7 +243,9 @@ export function PatientDashboardScreen({ patientId, onBack }: PatientDashboardSc
             {/* X-axis labels */}
             <div className="absolute bottom-0 w-full flex justify-between text-xs text-gray-500 transform translate-y-6">
               {patient.continuousHeartRateData.map(data => (
-                <span key={data.date}>{new Date(data.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}</span>
+                <span key={data.date}>
+                  {new Date(data.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
+                </span>
               ))}
             </div>
           </div>
