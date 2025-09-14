@@ -55,7 +55,7 @@ export function LaunchScreen({ onLogin, onNewUser, onClinicianLogin }: LaunchScr
             
             <Button 
               onClick={onClinicianLogin}
-              variant="secondary" 
+              variant="primary" 
               size="lg" 
               className="w-full"
             >

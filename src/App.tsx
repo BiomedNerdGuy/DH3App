@@ -72,7 +72,7 @@ function App() {
   };
 
   const handleClinicianLogin = () => {
-    setCurrentScreen('clinician-code');
+    updateState({ currentScreen: 'clinician-code' });
   };
 
   const handleLoginSubmit = (email: string, password: string) => {
