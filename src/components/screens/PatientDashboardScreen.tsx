@@ -412,5 +412,3 @@ export function PatientDashboardScreen({ patientId, onBack }: PatientDashboardSc
     </div>
   );
 }
-
-export { PatientDashboardScreen }
