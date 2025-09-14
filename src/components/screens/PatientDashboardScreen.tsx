@@ -51,7 +51,9 @@ const mockPatientData: PatientData = {
     { date: '2024-01-16', averageHR: 79, minHR: 68, maxHR: 108 },
     { date: '2024-01-17', averageHR: 76, minHR: 62, maxHR: 102 },
     { date: '2024-01-18', averageHR: 85, minHR: 70, maxHR: 125 },
-    { date: '2024-01-19', averageHR: 78, minHR: 66, maxHR: 107 }
+    { date: '2024-01-19', averageHR: 78, minHR: 66, maxHR: 107 },
+    { date: '2024-01-20', averageHR: 81, minHR: 69, maxHR: 118 },
+    { date: '2024-01-21', averageHR: 77, minHR: 64, maxHR: 112 }
   ],
   episodes: [
     {
@@ -183,33 +185,15 @@ export function PatientDashboardScreen({ patientId, onBack }: PatientDashboardSc
                 fill="none"
                 stroke="#0d9488"
                 strokeWidth="3"
-                points={patient.continuousHeartRateData.map((data, index) => {
-                  const x = (index / (patient.continuousHeartRateData.length - 1)) * 100;
-                  const y = 100 - ((data.averageHR - 60) / 80) * 100;
-                  return `${x}%,${y}%`;
-                }).join(' ')}
+                points="0,60 14.3,45 28.6,70 42.9,25 57.1,60 71.4,40 85.7,55 100,50"
               />
               
               {/* Episode markers */}
-              {patient.episodes.slice(0, 5).map((episode, index) => {
-                const dayIndex = patient.continuousHeartRateData.findIndex(d => d.date === episode.date);
-                if (dayIndex === -1) return null;
-                
-                const x = (dayIndex / (patient.continuousHeartRateData.length - 1)) * 100;
-                const y = 100 - ((episode.heartRate! - 60) / 80) * 100;
-                
-                return (
-                  <circle
-                    key={episode.id}
-                    cx={`${x}%`}
-                    cy={`${y}%`}
-                    r="4"
-                    fill="#f59e0b"
-                    stroke="#ffffff"
-                    strokeWidth="2"
-                  />
-                );
-              })}
+              <circle cx="0%" cy="60%" r="4" fill="#f59e0b" stroke="#ffffff" strokeWidth="2" />
+              <circle cx="14.3%" cy="45%" r="4" fill="#f59e0b" stroke="#ffffff" strokeWidth="2" />
+              <circle cx="42.9%" cy="25%" r="4" fill="#f59e0b" stroke="#ffffff" strokeWidth="2" />
+              <circle cx="71.4%" cy="40%" r="4" fill="#f59e0b" stroke="#ffffff" strokeWidth="2" />
+              <circle cx="85.7%" cy="55%" r="4" fill="#f59e0b" stroke="#ffffff" strokeWidth="2" />
             </svg>
             
             {/* X-axis labels */}
