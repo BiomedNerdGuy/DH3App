@@ -6,9 +6,10 @@ import { Card } from '../ui/Card';
 interface LaunchScreenProps {
   onLogin: () => void;
   onNewUser: () => void;
+  onClinicianLogin: () => void;
 }
 
-export function LaunchScreen({ onLogin, onNewUser }: LaunchScreenProps) {
+export function LaunchScreen({ onLogin, onNewUser, onClinicianLogin }: LaunchScreenProps) {
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-teal-50 flex items-center justify-center p-4">
       <div className="w-full max-w-md space-y-8">

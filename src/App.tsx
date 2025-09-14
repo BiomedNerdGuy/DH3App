@@ -318,6 +318,7 @@ function App() {
         <LaunchScreen 
           onLogin={handleLogin}
           onNewUser={handleNewUser}
+          onClinicianLogin={handleClinicianLogin}
         />
       );
 
@@ -325,30 +326,6 @@ function App() {
       return (
         <LoginScreen 
           onLogin={handleLoginSubmit}
-          onBack={handleBack}
-        />
-      );
-
-    case 'clinician-code':
-      return (
-        <ClinicianCodeScreen 
-          onCodeSubmit={handleClinicianCodeSubmit}
-          onBack={handleBack}
-        />
-      );
-
-    case 'clinician-home':
-      return (
-        <ClinicianHomeScreen 
-          onPatientSelect={handlePatientSelect}
-          onAddNewPatient={handleAddNewPatient}
-        />
-      );
-
-    case 'clinician-add-patient':
-      return (
-        <ClinicianAddPatientScreen 
-          onPatientCodeSubmit={handlePatientCodeSubmit}
           onBack={handleBack}
         />
       );
@@ -574,6 +551,7 @@ function App() {
         <LaunchScreen 
           onLogin={handleLogin}
           onNewUser={handleNewUser}
+          onClinicianLogin={handleClinicianLogin}
         />
       );
   }
