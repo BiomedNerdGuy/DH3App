@@ -20,6 +20,10 @@ const initialState: AppState = {
 export function useAppState() {
   const [state, setState] = useState<AppState>(initialState);
 
+  const updateState = useCallback((updates: Partial<AppState>) => {
+    setState(prev => ({ ...prev, ...updates }));
+  }, []);
+
   const loginUser = useCallback(() => {
     updateState({ 
       onboardingComplete: true, 
@@ -44,10 +48,6 @@ export function useAppState() {
       ]
     });
   }, [updateState]);
-
-  const updateState = useCallback((updates: Partial<AppState>) => {
-    setState(prev => ({ ...prev, ...updates }));
-  }, []);
 
   const setCurrentScreen = useCallback((screen: string) => {
     updateState({ currentScreen: screen });
