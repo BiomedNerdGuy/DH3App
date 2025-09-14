@@ -148,7 +148,10 @@ export function ClinicianHomeScreen({ onPatientSelect, onAddNewPatient }: Clinic
               <Card 
                 key={patient.id} 
                 className="p-4 hover:shadow-md transition-shadow cursor-pointer"
-                onClick={() => onPatientSelect(patient.id)}
+                onClick={() => {
+                  console.log('Patient card clicked:', patient.id, patient.name);
+                  onPatientSelect(patient.id);
+                }}
               >
                 <div className="flex items-center justify-between">
                   <div className="flex items-center space-x-4">
