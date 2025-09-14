@@ -177,21 +177,45 @@ export function PatientDashboardScreen({ patientId, onBack }: PatientDashboardSc
             </div>
             
             {/* Data points and lines */}
-            <svg className="absolute inset-0 w-full h-full">
+            <svg className="absolute inset-0 w-full h-full" viewBox="0 0 100 100" preserveAspectRatio="none">
               {/* Continuous HR line */}
               <polyline
                 fill="none"
                 stroke="#0d9488"
-                strokeWidth="3"
-                points="0,59 25,63 50,70 75,56 100,64"
+                strokeWidth="2"
+                points={(() => {
+                  // Map heart rate data to SVG coordinates
+                  // X: 0-100 for 5 days, Y: 0-100 where 0=140bpm, 100=60bpm
+                  const points = patient.continuousHeartRateData.map((data, index) => {
+                    const x = (index / (patient.continuousHeartRateData.length - 1)) * 100;
+                    const y = ((140 - data.averageHR) / (140 - 60)) * 100;
+                    return `${x},${y}`;
+                  });
+                  return points.join(' ');
+                })()}
               />
               
               {/* Episode markers */}
-              <circle cx="5%" cy="70%" r="4" fill="#f59e0b" stroke="#ffffff" strokeWidth="2" />
-              <circle cx="15%" cy="65%" r="4" fill="#f59e0b" stroke="#ffffff" strokeWidth="2" />
-              <circle cx="30%" cy="75%" r="4" fill="#f59e0b" stroke="#ffffff" strokeWidth="2" />
-              <circle cx="45%" cy="80%" r="4" fill="#f59e0b" stroke="#ffffff" strokeWidth="2" />
-              <circle cx="80%" cy="60%" r="4" fill="#f59e0b" stroke="#ffffff" strokeWidth="2" />
+              {patient.episodes.slice(0, 5).map((episode, index) => {
+                // Calculate position based on episode date and heart rate
+                const episodeDate = new Date(episode.date);
+                const startDate = new Date(patient.continuousHeartRateData[0].date);
+                const daysDiff = Math.floor((episodeDate.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24));
+                const x = (daysDiff / 4) * 100; // 4 days span (0-4 for 5 days)
+                const y = episode.heartRate ? ((140 - episode.heartRate) / (140 - 60)) * 100 : 50;
+                
+                return (
+                  <circle 
+                    key={episode.id}
+                    cx={x} 
+                    cy={y} 
+                    r="3" 
+                    fill="#f59e0b" 
+                    stroke="#ffffff" 
+                    strokeWidth="1.5" 
+                  />
+                );
+              })}
             </svg>
             
             {/* X-axis labels */}
