@@ -210,8 +210,6 @@ export function PatientDashboardScreen({ patientId, onBack }: PatientDashboardSc
               <polyline
                 fill="none"
                 stroke="#0d9488"
-                strokeWidth="2"
-                points={(() => {
                 strokeWidth="0.3"
                 points={heartRateData.map((point, index) => {
                   const dayIndex = Math.floor(index / 2000); // 2000 points per day
