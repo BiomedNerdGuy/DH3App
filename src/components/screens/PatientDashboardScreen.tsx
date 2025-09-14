@@ -183,15 +183,15 @@ export function PatientDashboardScreen({ patientId, onBack }: PatientDashboardSc
                 fill="none"
                 stroke="#0d9488"
                 strokeWidth="3"
-                points="0,45 25,65 50,75 75,30 100,55"
+                points="0,70 25,75 50,80 75,60 100,72"
               />
               
               {/* Episode markers */}
-              <circle cx="0%" cy="45%" r="4" fill="#f59e0b" stroke="#ffffff" strokeWidth="2" />
-              <circle cx="0%" cy="65%" r="4" fill="#f59e0b" stroke="#ffffff" strokeWidth="2" />
-              <circle cx="25%" cy="65%" r="4" fill="#f59e0b" stroke="#ffffff" strokeWidth="2" />
-              <circle cx="50%" cy="75%" r="4" fill="#f59e0b" stroke="#ffffff" strokeWidth="2" />
-              <circle cx="75%" cy="30%" r="4" fill="#f59e0b" stroke="#ffffff" strokeWidth="2" />
+              <circle cx="5%" cy="70%" r="4" fill="#f59e0b" stroke="#ffffff" strokeWidth="2" />
+              <circle cx="15%" cy="65%" r="4" fill="#f59e0b" stroke="#ffffff" strokeWidth="2" />
+              <circle cx="30%" cy="75%" r="4" fill="#f59e0b" stroke="#ffffff" strokeWidth="2" />
+              <circle cx="45%" cy="80%" r="4" fill="#f59e0b" stroke="#ffffff" strokeWidth="2" />
+              <circle cx="80%" cy="60%" r="4" fill="#f59e0b" stroke="#ffffff" strokeWidth="2" />
             </svg>
             
             {/* X-axis labels */}
