@@ -10,11 +10,11 @@ interface PatientData {
   averageHeartRate: number;
   episodeCount: number;
   heartRateRange: { min: number; max: number };
-  dailyHeartRateData: {
+  continuousHeartRateData: {
     date: string;
-    restingHR: number;
-    standingHR: number;
-    increase: number;
+    averageHR: number;
+    minHR: number;
+    maxHR: number;
   }[];
   episodes: {
     id: string;
@@ -46,12 +46,12 @@ const mockPatientData: PatientData = {
   averageHeartRate: 78,
   episodeCount: 12,
   heartRateRange: { min: 65, max: 125 },
-  dailyHeartRateData: [
-    { date: '2024-01-15', restingHR: 72, standingHR: 105, increase: 33 },
-    { date: '2024-01-16', restingHR: 75, standingHR: 108, increase: 33 },
-    { date: '2024-01-17', restingHR: 70, standingHR: 102, increase: 32 },
-    { date: '2024-01-18', restingHR: 74, standingHR: 110, increase: 36 },
-    { date: '2024-01-19', restingHR: 73, standingHR: 107, increase: 34 }
+  continuousHeartRateData: [
+    { date: '2024-01-15', averageHR: 82, minHR: 65, maxHR: 115 },
+    { date: '2024-01-16', averageHR: 79, minHR: 68, maxHR: 108 },
+    { date: '2024-01-17', averageHR: 76, minHR: 62, maxHR: 102 },
+    { date: '2024-01-18', averageHR: 85, minHR: 70, maxHR: 125 },
+    { date: '2024-01-19', averageHR: 78, minHR: 66, maxHR: 107 }
   ],
   episodes: [
     {
@@ -178,36 +178,24 @@ export function PatientDashboardScreen({ patientId, onBack }: PatientDashboardSc
             
             {/* Data points and lines */}
             <svg className="absolute inset-0 w-full h-full">
-              {/* Resting HR line */}
+              {/* Continuous HR line */}
               <polyline
                 fill="none"
                 stroke="#0d9488"
-                strokeWidth="2"
-                points={patient.dailyHeartRateData.map((data, index) => {
-                  const x = (index / (patient.dailyHeartRateData.length - 1)) * 100;
-                  const y = 100 - ((data.restingHR - 60) / 80) * 100;
-                  return `${x}%,${y}%`;
-                }).join(' ')}
-              />
-              
-              {/* Standing HR line */}
-              <polyline
-                fill="none"
-                stroke="#dc2626"
-                strokeWidth="2"
-                points={patient.dailyHeartRateData.map((data, index) => {
-                  const x = (index / (patient.dailyHeartRateData.length - 1)) * 100;
-                  const y = 100 - ((data.standingHR - 60) / 80) * 100;
+                strokeWidth="3"
+                points={patient.continuousHeartRateData.map((data, index) => {
+                  const x = (index / (patient.continuousHeartRateData.length - 1)) * 100;
+                  const y = 100 - ((data.averageHR - 60) / 80) * 100;
                   return `${x}%,${y}%`;
                 }).join(' ')}
               />
               
               {/* Episode markers */}
               {patient.episodes.slice(0, 5).map((episode, index) => {
-                const dayIndex = patient.dailyHeartRateData.findIndex(d => d.date === episode.date);
+                const dayIndex = patient.continuousHeartRateData.findIndex(d => d.date === episode.date);
                 if (dayIndex === -1) return null;
                 
-                const x = (dayIndex / (patient.dailyHeartRateData.length - 1)) * 100;
+                const x = (dayIndex / (patient.continuousHeartRateData.length - 1)) * 100;
                 const y = 100 - ((episode.heartRate! - 60) / 80) * 100;
                 
                 return (
@@ -226,7 +214,7 @@ export function PatientDashboardScreen({ patientId, onBack }: PatientDashboardSc
             
             {/* X-axis labels */}
             <div className="absolute bottom-0 w-full flex justify-between text-xs text-gray-500 transform translate-y-6">
-              {patient.dailyHeartRateData.map(data => (
+              {patient.continuousHeartRateData.map(data => (
                 <span key={data.date}>{new Date(data.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}</span>
               ))}
             </div>
@@ -237,11 +225,7 @@ export function PatientDashboardScreen({ patientId, onBack }: PatientDashboardSc
         <div className="flex items-center justify-center space-x-6 mt-6 text-sm">
           <div className="flex items-center space-x-2">
             <div className="w-4 h-0.5 bg-teal-600"></div>
-            <span>Resting HR</span>
-          </div>
-          <div className="flex items-center space-x-2">
-            <div className="w-4 h-0.5 bg-red-600"></div>
-            <span>Standing HR</span>
+            <span>Continuous HR</span>
           </div>
           <div className="flex items-center space-x-2">
             <div className="w-3 h-3 bg-amber-500 rounded-full"></div>
