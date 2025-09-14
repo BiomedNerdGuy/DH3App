@@ -60,7 +60,8 @@ function App() {
     viewReport,
     downloadReport,
     emailReport,
-    shareReport
+    shareReport,
+    updateState
   } = useAppState();
 
   const handleLogin = () => {
