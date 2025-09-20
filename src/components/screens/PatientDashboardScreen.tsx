@@ -456,7 +456,7 @@ export function PatientDashboardScreen({ patientId, onBack }: PatientDashboardSc
 
         {/* Content */}
         {activeView === 'dashboard' && renderDashboard()}
-        {activeView === 'compass' && renderCompassResults()}
+        {activeView === 'voss' && renderVossResults()}
         {activeView === 'episodes' && renderEpisodeHistory()}
       </div>
     </div>
