@@ -134,21 +134,12 @@ function analyzeSymptoms(episodes: Episode[], symptoms: SymptomEntry[]): Symptom
 function compareVossScores(baseline?: VossResponse[], followUp?: VossResponse[]): VossComparison {
   // VOSS scoring - sum of all 9 symptom scores (0-90 total)
   const baselineScore = baseline ? baseline.reduce((sum, response) => sum + response.value, 0) : 0;
-  const followUpScore = followUp ? followUp.reduce((sum, response) => sum + response.value, 0) : 0;
-  const scoreDifference = followUpScore - baselineScore;
+  const followUpScore = 0; // No follow-up survey taken
+  const scoreDifference = 0; // No comparison possible
 
-  let interpretation = '';
-  if (scoreDifference > 5) {
-    interpretation = 'Significant increase in symptom burden';
-  } else if (scoreDifference > 0) {
-    interpretation = 'Mild increase in symptom burden';
-  } else if (scoreDifference < -5) {
-    interpretation = 'Significant improvement in symptom burden';
-  } else if (scoreDifference < 0) {
-    interpretation = 'Mild improvement in symptom burden';
-  } else {
-    interpretation = 'No significant change in symptom burden';
-  }
+  const interpretation = `Baseline VOSS score of ${baselineScore}/90 indicates ${
+    baselineScore >= 45 ? 'high' : baselineScore >= 25 ? 'moderate' : 'mild'
+  } orthostatic symptom burden. No follow-up survey was completed.`;
 
   return {
     baselineScore,

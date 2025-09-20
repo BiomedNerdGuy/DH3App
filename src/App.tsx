@@ -204,11 +204,6 @@ function App() {
   };
 
   const handleFiveDayComplete = () => {
-    setCurrentScreen('post-baseline-compass');
-  };
-
-  const handlePostBaselineVossComplete = (responses: any[]) => {
-    setVossFollowUp(responses);
     generateReport();
   };
   const handleReportReady = () => {
@@ -289,16 +284,6 @@ function App() {
         break;
       case 'sit-lie-down':
         setCurrentScreen('intro-to-test');
-        break;
-      case 'time-to-stand':
-        setCurrentScreen('sit-lie-down');
-        break;
-      case 'daily-test-complete':
-        setCurrentScreen('home');
-        break;
-      case 'post-baseline-compass':
-        setCurrentScreen('five-day-complete');
-        break;
       case 'symptom-log':
         setCurrentScreen('home');
         break;
@@ -309,7 +294,7 @@ function App() {
         setCurrentScreen('home');
         break;
       case 'report-generation':
-        setCurrentScreen('post-baseline-compass');
+        setCurrentScreen('five-day-complete');
         break;
       case 'report-ready':
         setCurrentScreen('report-generation');

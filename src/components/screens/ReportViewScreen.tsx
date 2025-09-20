@@ -217,26 +217,17 @@ export function ReportViewScreen({ report, onBack, onDownload, onEmail, onShare 
     <div className="space-y-6">
       <h3 className="font-medium text-gray-900">VOSS Score Comparison</h3>
       
-      {/* Score Comparison */}
+      {/* Baseline Score */}
       <div className="bg-teal-50 border border-teal-200 rounded-lg p-4">
-        <h4 className="font-medium text-teal-900 mb-3">Overall Scores:</h4>
-        <div className="grid grid-cols-3 gap-4 text-center">
+        <h4 className="font-medium text-teal-900 mb-3">Baseline Assessment:</h4>
+        <div className="grid grid-cols-2 gap-4 text-center">
           <div>
             <div className="text-lg font-bold text-teal-700">{report.vossComparison.baselineScore}</div>
-            <div className="text-sm text-teal-600">Baseline</div>
+            <div className="text-sm text-teal-600">VOSS Score</div>
           </div>
           <div>
-            <div className="text-lg font-bold text-teal-700">{report.vossComparison.followUpScore}</div>
-            <div className="text-sm text-teal-600">Follow-up</div>
-          </div>
-          <div>
-            <div className={`text-lg font-bold ${
-              report.vossComparison.scoreDifference > 0 ? 'text-red-700' : 
-              report.vossComparison.scoreDifference < 0 ? 'text-green-700' : 'text-gray-700'
-            }`}>
-              {report.vossComparison.scoreDifference > 0 ? '+' : ''}{report.vossComparison.scoreDifference}
-            </div>
-            <div className="text-sm text-gray-600">Change</div>
+            <div className="text-lg font-bold text-teal-700">90</div>
+            <div className="text-sm text-teal-600">Maximum Score</div>
           </div>
         </div>
       </div>
@@ -256,7 +247,7 @@ export function ReportViewScreen({ report, onBack, onDownload, onEmail, onShare 
           <li>• Vanderbilt Orthostatic Symptom Score measures symptom burden in POTS</li>
           <li>• Scores range from 0-90 (9 symptoms × 0-10 scale each)</li>
           <li>• Higher scores indicate greater subjective symptom severity</li>
-          <li>• Useful for tracking symptom changes over time</li>
+          <li>• Provides baseline assessment of orthostatic symptoms</li>
         </ul>
       </div>
     </div>
