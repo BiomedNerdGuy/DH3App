@@ -164,6 +164,9 @@ export interface SymptomEntry {
   symptoms: string[];
   severity: number; // 1-10 scale
   notes?: string;
+  timeOfDay?: string;
+  activityType?: string;
+  otherDetails?: string;
   audioNote?: string;
   heartRate?: number;
   location?: {

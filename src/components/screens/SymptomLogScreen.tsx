@@ -27,7 +27,9 @@ const commonSymptoms = [
 export function SymptomLogScreen({ onLogSymptom, onStartEpisode, onBack, locationEnabled }: SymptomLogScreenProps) {
   const [selectedSymptoms, setSelectedSymptoms] = useState<string[]>([]);
   const [severity, setSeverity] = useState<number>(5);
-  const [notes, setNotes] = useState('');
+  const [timeOfDay, setTimeOfDay] = useState('');
+  const [activityType, setActivityType] = useState('');
+  const [otherDetails, setOtherDetails] = useState('');
   const [customSymptom, setCustomSymptom] = useState('');
   const [showCustomInput, setShowCustomInput] = useState(false);
 
@@ -50,10 +52,17 @@ export function SymptomLogScreen({ onLogSymptom, onStartEpisode, onBack, locatio
   const handleLogSymptom = () => {
     if (selectedSymptoms.length === 0) return;
 
+    const combinedNotes = [timeOfDay, activityType, otherDetails]
+      .filter(field => field.trim())
+      .join(' | ');
+
     const symptomData = {
       symptoms: selectedSymptoms,
       severity,
-      notes: notes.trim() || undefined,
+      notes: combinedNotes || undefined,
+      timeOfDay: timeOfDay.trim() || undefined,
+      activityType: activityType.trim() || undefined,
+      otherDetails: otherDetails.trim() || undefined,
       timestamp: new Date().toISOString()
     };
 
@@ -63,10 +72,17 @@ export function SymptomLogScreen({ onLogSymptom, onStartEpisode, onBack, locatio
   const handleStartEpisode = () => {
     if (selectedSymptoms.length === 0) return;
 
+    const combinedNotes = [timeOfDay, activityType, otherDetails]
+      .filter(field => field.trim())
+      .join(' | ');
+
     const symptomData = {
       symptoms: selectedSymptoms,
       severity,
-      notes: notes.trim() || undefined,
+      notes: combinedNotes || undefined,
+      timeOfDay: timeOfDay.trim() || undefined,
+      activityType: activityType.trim() || undefined,
+      otherDetails: otherDetails.trim() || undefined,
       timestamp: new Date().toISOString()
     };
 
@@ -178,15 +194,43 @@ export function SymptomLogScreen({ onLogSymptom, onStartEpisode, onBack, locatio
                 </div>
               </div>
 
-              {/* Notes */}
+              {/* Time of Day */}
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Time of Day, Activity Type, and Other Details
+                  Time of Day
+                </label>
+                <input
+                  type="text"
+                  value={timeOfDay}
+                  onChange={(e) => setTimeOfDay(e.target.value)}
+                  placeholder="e.g., Morning, After lunch, Evening..."
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-teal-500"
+                />
+              </div>
+
+              {/* Activity Type */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Activity Type
+                </label>
+                <input
+                  type="text"
+                  value={activityType}
+                  onChange={(e) => setActivityType(e.target.value)}
+                  placeholder="e.g., Standing, Walking, Sitting, Exercise..."
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-teal-500"
+                />
+              </div>
+
+              {/* Other Details */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Other Details
                 </label>
                 <textarea
-                  value={notes}
-                  onChange={(e) => setNotes(e.target.value)}
-                  placeholder="Any additional details about your symptoms..."
+                  value={otherDetails}
+                  onChange={(e) => setOtherDetails(e.target.value)}
+                  placeholder="Any additional details, triggers, or context..."
                   className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-teal-500 resize-none"
                   rows={3}
                 />
