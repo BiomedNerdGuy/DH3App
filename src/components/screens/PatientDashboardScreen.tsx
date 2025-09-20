@@ -3,35 +3,249 @@ import { ArrowLeft, Heart, Activity, TrendingUp, FileText, Clock, MapPin } from 
 import { Button } from '../ui/Button';
 import { Card } from '../ui/Card';
 
-interface PatientData {
-  id: string;
-  name: string;
-  patientCode: string;
-  averageHeartRate: number;
-  episodeCount: number;
-  heartRateRange: { min: number; max: number };
-  continuousHeartRateData: {
-    date: string;
-    averageHR: number;
-    minHR: number;
-    maxHR: number;
-  }[];
-  episodes: {
-    id: string;
-    date: string;
-    time: string;
-    duration: string;
-    symptoms: string[];
-    severity: number;
-    notes?: string;
-    heartRate?: number;
-  }[];
-  compassResults: {
-    category: string;
-    score: number;
-    maxScore: number;
-  }[];
-}
+// Real heart rate data from provided dataset
+const heartRateData = [
+  { minute: 1, heartRate: 78.53 },
+  { minute: 2, heartRate: 78.45 },
+  { minute: 3, heartRate: 78.54 },
+  { minute: 4, heartRate: 78.63 },
+  { minute: 5, heartRate: 78.72 },
+  { minute: 6, heartRate: 78.80 },
+  { minute: 7, heartRate: 78.89 },
+  { minute: 8, heartRate: 78.98 },
+  { minute: 9, heartRate: 79.07 },
+  { minute: 10, heartRate: 79.15 },
+  { minute: 11, heartRate: 79.24 },
+  { minute: 12, heartRate: 79.33 },
+  { minute: 13, heartRate: 79.42 },
+  { minute: 14, heartRate: 79.50 },
+  { minute: 15, heartRate: 79.59 },
+  { minute: 16, heartRate: 79.68 },
+  { minute: 17, heartRate: 79.76 },
+  { minute: 18, heartRate: 79.85 },
+  { minute: 19, heartRate: 79.94 },
+  { minute: 20, heartRate: 80.03 },
+  { minute: 21, heartRate: 80.11 },
+  { minute: 22, heartRate: 80.20 },
+  { minute: 23, heartRate: 80.29 },
+  { minute: 24, heartRate: 80.38 },
+  { minute: 25, heartRate: 80.46 },
+  { minute: 26, heartRate: 80.55 },
+  { minute: 27, heartRate: 80.64 },
+  { minute: 28, heartRate: 80.73 },
+  { minute: 29, heartRate: 80.81 },
+  { minute: 30, heartRate: 80.90 },
+  { minute: 31, heartRate: 80.99 },
+  { minute: 32, heartRate: 81.08 },
+  { minute: 33, heartRate: 81.16 },
+  { minute: 34, heartRate: 81.25 },
+  { minute: 35, heartRate: 81.34 },
+  { minute: 36, heartRate: 81.43 },
+  { minute: 37, heartRate: 81.51 },
+  { minute: 38, heartRate: 81.60 },
+  { minute: 39, heartRate: 81.69 },
+  { minute: 40, heartRate: 81.78 },
+  { minute: 41, heartRate: 81.86 },
+  { minute: 42, heartRate: 81.95 },
+  { minute: 43, heartRate: 82.04 },
+  { minute: 44, heartRate: 82.13 },
+  { minute: 45, heartRate: 82.21 },
+  { minute: 46, heartRate: 82.30 },
+  { minute: 47, heartRate: 82.39 },
+  { minute: 48, heartRate: 82.48 },
+  { minute: 49, heartRate: 82.56 },
+  { minute: 50, heartRate: 82.65 },
+  { minute: 51, heartRate: 82.74 },
+  { minute: 52, heartRate: 82.83 },
+  { minute: 53, heartRate: 82.91 },
+  { minute: 54, heartRate: 83.00 },
+  { minute: 55, heartRate: 75.00 },
+  { minute: 56, heartRate: 67.00 },
+  { minute: 57, heartRate: 59.00 },
+  { minute: 58, heartRate: 51.00 },
+  { minute: 59, heartRate: 71.11 },
+  { minute: 60, heartRate: 66.74 },
+  { minute: 61, heartRate: 62.37 },
+  { minute: 62, heartRate: 58.00 },
+  { minute: 63, heartRate: 58.75 },
+  { minute: 64, heartRate: 59.50 },
+  { minute: 65, heartRate: 60.25 },
+  { minute: 66, heartRate: 61.00 },
+  { minute: 67, heartRate: 64.00 },
+  { minute: 68, heartRate: 67.00 },
+  { minute: 69, heartRate: 70.00 },
+  { minute: 70, heartRate: 73.00 },
+  { minute: 71, heartRate: 76.00 },
+  { minute: 72, heartRate: 80.00 },
+  { minute: 73, heartRate: 84.00 },
+  { minute: 74, heartRate: 88.00 },
+  { minute: 75, heartRate: 84.84 },
+  { minute: 76, heartRate: 81.69 },
+  { minute: 77, heartRate: 78.53 },
+  { minute: 78, heartRate: 78.45 },
+  { minute: 79, heartRate: 78.39 },
+  { minute: 80, heartRate: 78.32 },
+  { minute: 81, heartRate: 78.25 },
+  { minute: 82, heartRate: 78.18 },
+  { minute: 83, heartRate: 78.11 },
+  { minute: 84, heartRate: 78.04 },
+  { minute: 85, heartRate: 77.98 },
+  { minute: 86, heartRate: 77.91 },
+  { minute: 87, heartRate: 77.84 },
+  { minute: 88, heartRate: 77.77 },
+  { minute: 89, heartRate: 77.70 },
+  { minute: 90, heartRate: 77.64 },
+  { minute: 91, heartRate: 77.57 },
+  { minute: 92, heartRate: 77.50 },
+  { minute: 93, heartRate: 77.43 },
+  { minute: 94, heartRate: 77.36 },
+  { minute: 95, heartRate: 77.29 },
+  { minute: 96, heartRate: 77.23 },
+  { minute: 97, heartRate: 77.16 },
+  { minute: 98, heartRate: 77.09 },
+  { minute: 99, heartRate: 77.02 },
+  { minute: 100, heartRate: 76.95 },
+  { minute: 101, heartRate: 76.89 },
+  { minute: 102, heartRate: 76.82 },
+  { minute: 103, heartRate: 76.75 },
+  { minute: 104, heartRate: 76.68 },
+  { minute: 105, heartRate: 76.61 },
+  { minute: 106, heartRate: 76.55 },
+  { minute: 107, heartRate: 76.48 },
+  { minute: 108, heartRate: 76.41 },
+  { minute: 109, heartRate: 76.34 },
+  { minute: 110, heartRate: 76.27 },
+  { minute: 111, heartRate: 76.20 },
+  { minute: 112, heartRate: 76.14 },
+  { minute: 113, heartRate: 76.07 },
+  { minute: 114, heartRate: 76.00 },
+  { minute: 115, heartRate: 75.20 },
+  { minute: 116, heartRate: 74.40 },
+  { minute: 117, heartRate: 73.60 },
+  { minute: 118, heartRate: 72.80 },
+  { minute: 119, heartRate: 72.00 },
+  { minute: 120, heartRate: 72.50 },
+  { minute: 121, heartRate: 73.00 },
+  { minute: 122, heartRate: 72.00 },
+  { minute: 123, heartRate: 71.00 },
+  { minute: 124, heartRate: 70.00 },
+  { minute: 125, heartRate: 69.00 },
+  { minute: 126, heartRate: 69.20 },
+  { minute: 127, heartRate: 69.40 },
+  { minute: 128, heartRate: 69.60 },
+  { minute: 129, heartRate: 69.80 },
+  { minute: 130, heartRate: 70.00 },
+  { minute: 131, heartRate: 70.11 },
+  { minute: 132, heartRate: 70.22 },
+  { minute: 133, heartRate: 70.33 },
+  { minute: 134, heartRate: 70.44 },
+  { minute: 135, heartRate: 70.56 },
+  { minute: 136, heartRate: 70.67 },
+  { minute: 137, heartRate: 70.78 },
+  { minute: 138, heartRate: 70.89 },
+  { minute: 139, heartRate: 71.00 },
+  { minute: 140, heartRate: 70.75 },
+  { minute: 141, heartRate: 70.50 },
+  { minute: 142, heartRate: 70.25 },
+  { minute: 143, heartRate: 70.00 },
+  { minute: 144, heartRate: 71.98 },
+  { minute: 145, heartRate: 73.97 },
+  { minute: 146, heartRate: 75.95 },
+  { minute: 147, heartRate: 77.93 },
+  { minute: 148, heartRate: 79.92 },
+  { minute: 149, heartRate: 79.00 },
+  { minute: 150, heartRate: 78.55 },
+  { minute: 151, heartRate: 79.15 },
+  { minute: 152, heartRate: 80.64 },
+  { minute: 153, heartRate: 74.77 },
+  { minute: 154, heartRate: 80.91 },
+  { minute: 155, heartRate: 76.23 },
+  { minute: 156, heartRate: 73.25 },
+  { minute: 157, heartRate: 79.67 },
+  { minute: 158, heartRate: 76.50 },
+  { minute: 159, heartRate: 84.40 },
+  { minute: 160, heartRate: 86.46 },
+  { minute: 161, heartRate: 87.67 },
+  { minute: 162, heartRate: 83.91 },
+  { minute: 163, heartRate: 88.25 },
+  { minute: 164, heartRate: 90.17 },
+  { minute: 165, heartRate: 88.77 },
+  { minute: 166, heartRate: 89.67 },
+  { minute: 167, heartRate: 90.58 },
+  { minute: 168, heartRate: 91.09 },
+  { minute: 169, heartRate: 97.75 },
+  { minute: 170, heartRate: 87.85 },
+  { minute: 171, heartRate: 83.33 },
+  { minute: 172, heartRate: 82.64 },
+  { minute: 173, heartRate: 82.00 },
+  { minute: 174, heartRate: 81.08 },
+  { minute: 175, heartRate: 85.09 },
+  { minute: 176, heartRate: 95.55 },
+  { minute: 177, heartRate: 96.08 },
+  { minute: 178, heartRate: 95.67 },
+  { minute: 179, heartRate: 96.08 },
+  { minute: 180, heartRate: 95.00 },
+  { minute: 181, heartRate: 96.50 },
+  { minute: 182, heartRate: 99.42 },
+  { minute: 183, heartRate: 105.33 },
+  { minute: 184, heartRate: 106.25 },
+  { minute: 185, heartRate: 112.08 },
+  { minute: 186, heartRate: 104.00 },
+  { minute: 187, heartRate: 84.31 },
+  { minute: 188, heartRate: 81.42 },
+  { minute: 189, heartRate: 79.67 },
+  { minute: 190, heartRate: 82.36 },
+  { minute: 191, heartRate: 81.00 },
+  { minute: 192, heartRate: 104.67 },
+  { minute: 193, heartRate: 122.92 },
+  { minute: 194, heartRate: 123.15 },
+  { minute: 195, heartRate: 119.73 },
+  { minute: 196, heartRate: 119.67 },
+  { minute: 197, heartRate: 116.50 },
+  { minute: 198, heartRate: 118.46 },
+  { minute: 199, heartRate: 118.36 },
+  { minute: 200, heartRate: 117.33 },
+  { minute: 201, heartRate: 121.50 },
+  { minute: 202, heartRate: 118.42 },
+  { minute: 203, heartRate: 123.50 },
+  { minute: 204, heartRate: 104.83 },
+  { minute: 205, heartRate: 97.00 },
+  { minute: 206, heartRate: 92.17 },
+  { minute: 207, heartRate: 94.75 },
+  { minute: 208, heartRate: 90.77 },
+  { minute: 209, heartRate: 122.27 },
+  { minute: 210, heartRate: 148.08 },
+  { minute: 211, heartRate: 153.54 },
+  { minute: 212, heartRate: 146.33 },
+  { minute: 213, heartRate: 137.00 },
+  { minute: 214, heartRate: 132.75 },
+  { minute: 215, heartRate: 131.25 },
+  { minute: 216, heartRate: 133.67 },
+  { minute: 217, heartRate: 144.50 },
+  { minute: 218, heartRate: 149.54 },
+  { minute: 219, heartRate: 153.36 },
+  { minute: 220, heartRate: 115.95 },
+  { minute: 221, heartRate: 78.53 },
+  { minute: 222, heartRate: 78.45 },
+  { minute: 223, heartRate: 78.20 },
+  { minute: 224, heartRate: 77.94 },
+  { minute: 225, heartRate: 77.68 },
+  { minute: 226, heartRate: 77.42 },
+  { minute: 227, heartRate: 77.17 },
+  { minute: 228, heartRate: 76.91 },
+  { minute: 229, heartRate: 76.65 },
+  { minute: 230, heartRate: 76.39 },
+  { minute: 231, heartRate: 76.14 },
+  { minute: 232, heartRate: 75.88 },
+  { minute: 233, heartRate: 75.62 },
+  { minute: 234, heartRate: 75.36 },
+  { minute: 235, heartRate: 75.11 },
+  { minute: 236, heartRate: 74.85 },
+  { minute: 237, heartRate: 74.59 },
+  { minute: 238, heartRate: 74.33 },
+  { minute: 239, heartRate: 74.07 },
+  { minute: 240, heartRate: 73.82 }
+];
 
 interface PatientData {
   id: string;
@@ -40,21 +254,14 @@ interface PatientData {
   averageHeartRate: number;
   episodeCount: number;
   heartRateRange: { min: number; max: number };
-  continuousHeartRateData: {
-    date: string;
-    averageHR: number;
-    minHR: number;
-    maxHR: number;
-  }[];
   episodes: {
     id: string;
-    date: string;
-    time: string;
     duration: string;
     symptoms: string[];
     severity: number;
-    notes?: string;
-    heartRate?: number;
+    timeOfDay?: string;
+    activityType?: string;
+    otherDetails?: string;
   }[];
   vossComparison: {
     baselineScore: number;
@@ -69,100 +276,63 @@ interface PatientDashboardScreenProps {
   onBack: () => void;
 }
 
-// Mock patient data for Emily Rodriguez
-const generateHeartRateData = () => {
-  const data = [];
-  const startDate = new Date('2024-01-13');
-  const totalPoints = 10000;
-  const pointsPerDay = totalPoints / 5;
-  
-  for (let day = 0; day < 5; day++) {
-    const currentDate = new Date(startDate);
-    currentDate.setDate(startDate.getDate() + day);
-    const dateStr = currentDate.toISOString().split('T')[0];
-    
-    for (let point = 0; point < pointsPerDay; point++) {
-      // Generate realistic heart rate with daily variation
-      const timeOfDay = point / pointsPerDay; // 0 to 1
-      const baseHR = 75 + Math.sin(timeOfDay * Math.PI * 2) * 5; // Daily rhythm
-      const noise = (Math.random() - 0.5) * 20; // Random variation
-      const heartRate = Math.max(60, Math.min(140, baseHR + noise));
-      
-      const timestamp = new Date(currentDate);
-      timestamp.setHours(Math.floor(timeOfDay * 24));
-      timestamp.setMinutes(Math.floor((timeOfDay * 24 * 60) % 60));
-      
-      data.push({
-        timestamp: timestamp.toISOString(),
-        date: dateStr,
-        heartRate: Math.round(heartRate),
-        timeOfDay
-      });
-    }
-  }
-  
-  return data;
-};
-
-const heartRateData = generateHeartRateData();
-
-// Find one high heart rate episode per day
-const generateEpisodes = () => {
-  const episodes = [];
-  const dates = ['2024-01-13', '2024-01-14', '2024-01-15', '2024-01-16', '2024-01-17'];
-  
-  dates.forEach((date, dayIndex) => {
-    const dayData = heartRateData.filter(d => d.date === date);
-    // Find the highest heart rate point of the day
-    const highestPoint = dayData.reduce((max, current) => 
-      current.heartRate > max.heartRate ? current : max
-    );
-    
-    const symptoms = [
-      ['Dizziness', 'Palpitations'],
-      ['Lightheaded', 'Fatigue'],
-      ['Dizziness', 'Brain Fog', 'Tremor'],
-      ['Palpitations', 'Chest Pain'],
-      ['Dizziness', 'Shortness of Breath']
-    ];
-    
-    const episode = {
-      id: `episode-${dayIndex + 1}`,
-      date: date,
-      time: new Date(highestPoint.timestamp).toLocaleTimeString('en-US', { 
-        hour: '2-digit', 
-        minute: '2-digit' 
-      }),
-      duration: `${15 + Math.floor(Math.random() * 20)} min`,
-      symptoms: symptoms[dayIndex],
-      severity: Math.min(10, Math.max(6, Math.floor(highestPoint.heartRate / 12))),
-      heartRate: highestPoint.heartRate,
-      timestamp: highestPoint.timestamp
-    };
-    
-    episodes.push(episode);
-  });
-  
-  return episodes;
-};
-
 const mockPatientData: PatientData = {
   id: '3',
   name: 'Emily Rodriguez',
   patientCode: 'ER2024003',
   averageHeartRate: Math.round(heartRateData.reduce((sum, d) => sum + d.heartRate, 0) / heartRateData.length),
   episodeCount: 5,
-  heartRateRange: { min: 65, max: 125 },
-  continuousHeartRateData: ['2024-01-13', '2024-01-14', '2024-01-15', '2024-01-16', '2024-01-17'].map(date => {
-    const dayData = heartRateData.filter(d => d.date === date);
-    return {
-      date,
-      averageHR: Math.round(dayData.reduce((sum, d) => sum + d.heartRate, 0) / dayData.length),
-      minHR: Math.min(...dayData.map(d => d.heartRate)),
-      maxHR: Math.max(...dayData.map(d => d.heartRate))
-    };
-  }),
-  episodes: generateEpisodes(),
+  heartRateRange: { 
+    min: Math.round(Math.min(...heartRateData.map(d => d.heartRate))), 
+    max: Math.round(Math.max(...heartRateData.map(d => d.heartRate))) 
+  },
+  episodes: [
+    {
+      id: 'episode-1',
+      duration: '18 min',
+      symptoms: ['Dizziness', 'Palpitations'],
+      severity: 7,
+      timeOfDay: 'Morning',
+      activityType: 'Standing up quickly',
+      otherDetails: 'Felt worse after standing for 10+ minutes in the kitchen'
+    },
+    {
+      id: 'episode-2',
+      duration: '25 min',
+      symptoms: ['Lightheaded', 'Fatigue'],
+      severity: 6,
+      timeOfDay: 'After lunch',
+      activityType: 'Walking upstairs',
+      otherDetails: 'Symptoms started halfway up the stairs, had to sit down'
+    },
+    {
+      id: 'episode-3',
+      duration: '32 min',
+      symptoms: ['Dizziness', 'Brain Fog', 'Tremor'],
+      severity: 8,
+      timeOfDay: 'Evening',
+      activityType: 'After exercise',
+      otherDetails: 'Occurred 30 minutes after light yoga session'
+    },
+    {
+      id: 'episode-4',
+      duration: '15 min',
+      symptoms: ['Palpitations', 'Chest Pain'],
+      severity: 7,
+      timeOfDay: 'Late morning',
+      activityType: 'Sitting to standing',
+      otherDetails: 'Heart racing feeling lasted longer than usual'
+    },
+    {
+      id: 'episode-5',
+      duration: '22 min',
+      symptoms: ['Dizziness', 'Shortness of Breath'],
+      severity: 6,
+      timeOfDay: 'Afternoon',
+      activityType: 'Walking outside',
+      otherDetails: 'Hot weather may have been a contributing factor'
+    }
+  ],
   vossComparison: {
     baselineScore: 42,
     followUpScore: 0, // No follow-up survey taken
@@ -211,15 +381,15 @@ export function PatientDashboardScreen({ patientId, onBack }: PatientDashboardSc
 
       {/* Heart Rate & Episode Graph */}
       <Card className="p-6">
-        {/* Blank Graph Container */}
+        <h3 className="text-lg font-semibold text-gray-900 mb-4">Heart Rate Over Time</h3>
         <div className="relative h-80 bg-gray-50 rounded-lg border-2 border-gray-200">
           {/* Y-axis */}
           <div className="absolute left-4 top-4 bottom-16 flex flex-col justify-between">
-            <span className="text-xs text-gray-600 font-medium">140</span>
-            <span className="text-xs text-gray-600 font-medium">120</span>
+            <span className="text-xs text-gray-600 font-medium">200</span>
+            <span className="text-xs text-gray-600 font-medium">150</span>
             <span className="text-xs text-gray-600 font-medium">100</span>
-            <span className="text-xs text-gray-600 font-medium">80</span>
-            <span className="text-xs text-gray-600 font-medium">60</span>
+            <span className="text-xs text-gray-600 font-medium">50</span>
+            <span className="text-xs text-gray-600 font-medium">0</span>
           </div>
           
           {/* Y-axis label */}
@@ -229,16 +399,16 @@ export function PatientDashboardScreen({ patientId, onBack }: PatientDashboardSc
           
           {/* X-axis */}
           <div className="absolute bottom-4 left-16 right-4 flex justify-between">
-            <span className="text-xs text-gray-600 font-medium">Jan 13</span>
-            <span className="text-xs text-gray-600 font-medium">Jan 14</span>
-            <span className="text-xs text-gray-600 font-medium">Jan 15</span>
-            <span className="text-xs text-gray-600 font-medium">Jan 16</span>
-            <span className="text-xs text-gray-600 font-medium">Jan 17</span>
+            <span className="text-xs text-gray-600 font-medium">0</span>
+            <span className="text-xs text-gray-600 font-medium">60</span>
+            <span className="text-xs text-gray-600 font-medium">120</span>
+            <span className="text-xs text-gray-600 font-medium">180</span>
+            <span className="text-xs text-gray-600 font-medium">240</span>
           </div>
           
           {/* X-axis label */}
           <div className="absolute bottom-0 left-1/2 transform -translate-x-1/2">
-            <span className="text-sm font-medium text-gray-700">Date</span>
+            <span className="text-sm font-medium text-gray-700">Minutes</span>
           </div>
           
           {/* Grid lines */}
@@ -259,6 +429,36 @@ export function PatientDashboardScreen({ patientId, onBack }: PatientDashboardSc
                 style={{ left: `${i * 25}%` }}
               ></div>
             ))}
+          </div>
+          
+          {/* Heart Rate Line Chart */}
+          <div className="absolute left-16 right-4 top-4 bottom-16">
+            <svg className="w-full h-full" viewBox="0 0 100 100" preserveAspectRatio="none">
+              <polyline
+                fill="none"
+                stroke="#0d9488"
+                strokeWidth="0.5"
+                points={heartRateData.map((point, index) => {
+                  const x = (index / (heartRateData.length - 1)) * 100;
+                  const y = 100 - ((point.heartRate - 0) / (200 - 0)) * 100;
+                  return `${x},${y}`;
+                }).join(' ')}
+              />
+              {/* Data points */}
+              {heartRateData.map((point, index) => {
+                const x = (index / (heartRateData.length - 1)) * 100;
+                const y = 100 - ((point.heartRate - 0) / (200 - 0)) * 100;
+                return (
+                  <circle
+                    key={index}
+                    cx={x}
+                    cy={y}
+                    r="0.3"
+                    fill="#0d9488"
+                  />
+                );
+              })}
+            </svg>
           </div>
         </div>
       </Card>
