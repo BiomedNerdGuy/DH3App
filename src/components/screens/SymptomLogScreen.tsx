@@ -203,7 +203,7 @@ export function SymptomLogScreen({ onLogSymptom, onStartEpisode, onBack, locatio
                   type="text"
                   value={timeOfDay}
                   onChange={(e) => setTimeOfDay(e.target.value)}
-                  placeholder="e.g., Morning, After lunch, Evening..."
+                  placeholder="1:37pm, 11:55am, etc..."
                   className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-teal-500"
                 />
               </div>
