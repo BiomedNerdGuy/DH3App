@@ -111,6 +111,16 @@ const generateEpisodes = () => {
   const episodes = [];
   const dates = ['2024-01-13', '2024-01-14', '2024-01-15', '2024-01-16', '2024-01-17'];
   
+  const timeOfDayOptions = ['Morning', 'After lunch', 'Evening', 'Late afternoon', 'Early morning'];
+  const activityOptions = ['Standing up quickly', 'Walking upstairs', 'After exercise', 'Sitting for long time', 'Getting out of bed'];
+  const detailsOptions = [
+    'Felt worse after standing for 10+ minutes',
+    'Symptoms triggered by hot shower',
+    'Occurred during stressful meeting',
+    'Happened after skipping breakfast',
+    'Symptoms worse in warm weather'
+  ];
+  
   dates.forEach((date, dayIndex) => {
     const dayData = heartRateData.filter(d => d.date === date);
     // Find the highest heart rate point of the day
@@ -136,6 +146,9 @@ const generateEpisodes = () => {
       duration: `${15 + Math.floor(Math.random() * 20)} min`,
       symptoms: symptoms[dayIndex],
       severity: Math.min(10, Math.max(6, Math.floor(highestPoint.heartRate / 12))),
+      timeOfDay: timeOfDayOptions[dayIndex],
+      activityType: activityOptions[dayIndex],
+      otherDetails: detailsOptions[dayIndex],
       heartRate: highestPoint.heartRate,
       timestamp: highestPoint.timestamp
     };
