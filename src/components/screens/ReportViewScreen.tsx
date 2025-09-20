@@ -19,7 +19,7 @@ export function ReportViewScreen({ report, onBack, onDownload, onEmail, onShare 
     { id: 'summary', label: 'Summary', icon: FileText },
     { id: 'baseline', label: 'Heart Rate', icon: Heart },
     { id: 'symptoms', label: 'Symptoms', icon: TrendingUp },
-    { id: 'compass', label: 'COMPASS-31', icon: FileText }
+    { id: 'voss', label: 'VOSS', icon: FileText }
   ];
 
   const renderSummary = () => (
@@ -55,9 +55,9 @@ export function ReportViewScreen({ report, onBack, onDownload, onEmail, onShare 
           </div>
           <div className="text-center">
             <div className="text-2xl font-bold text-teal-700">
-              {report.compassComparison.followUpScore}
+              {report.vossComparison.followUpScore}
             </div>
-            <div className="text-sm text-teal-600">COMPASS Score</div>
+            <div className="text-sm text-teal-600">VOSS Score</div>
           </div>
         </div>
       </div>
@@ -213,55 +213,51 @@ export function ReportViewScreen({ report, onBack, onDownload, onEmail, onShare 
     </div>
   );
 
-  const renderCompass = () => (
+  const renderVoss = () => (
     <div className="space-y-6">
-      <h3 className="font-medium text-gray-900">COMPASS-31 Comparison</h3>
+      <h3 className="font-medium text-gray-900">VOSS Score Comparison</h3>
       
       {/* Score Comparison */}
       <div className="bg-teal-50 border border-teal-200 rounded-lg p-4">
         <h4 className="font-medium text-teal-900 mb-3">Overall Scores:</h4>
         <div className="grid grid-cols-3 gap-4 text-center">
           <div>
-            <div className="text-lg font-bold text-teal-700">{report.compassComparison.baselineScore}</div>
+            <div className="text-lg font-bold text-teal-700">{report.vossComparison.baselineScore}</div>
             <div className="text-sm text-teal-600">Baseline</div>
           </div>
           <div>
-            <div className="text-lg font-bold text-teal-700">{report.compassComparison.followUpScore}</div>
+            <div className="text-lg font-bold text-teal-700">{report.vossComparison.followUpScore}</div>
             <div className="text-sm text-teal-600">Follow-up</div>
           </div>
           <div>
             <div className={`text-lg font-bold ${
-              report.compassComparison.scoreDifference > 0 ? 'text-red-700' : 
-              report.compassComparison.scoreDifference < 0 ? 'text-green-700' : 'text-gray-700'
+              report.vossComparison.scoreDifference > 0 ? 'text-red-700' : 
+              report.vossComparison.scoreDifference < 0 ? 'text-green-700' : 'text-gray-700'
             }`}>
-              {report.compassComparison.scoreDifference > 0 ? '+' : ''}{report.compassComparison.scoreDifference}
+              {report.vossComparison.scoreDifference > 0 ? '+' : ''}{report.vossComparison.scoreDifference}
             </div>
             <div className="text-sm text-gray-600">Change</div>
           </div>
         </div>
       </div>
 
-      {/* Category Changes */}
+      {/* Interpretation */}
       <div className="space-y-3">
-        <h4 className="font-medium text-gray-900">Category Changes:</h4>
-        <div className="space-y-2">
-          {report.compassComparison.categoryChanges.map((category, index) => (
-            <div key={index} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-              <span className="text-sm font-medium text-gray-900">{category.category}</span>
-              <div className="text-right">
-                <div className="text-sm text-gray-600">
-                  {category.baselineScore} → {category.followUpScore}
-                </div>
-                <div className={`text-xs font-medium ${
-                  category.change > 0 ? 'text-red-600' : 
-                  category.change < 0 ? 'text-green-600' : 'text-gray-600'
-                }`}>
-                  {category.change > 0 ? '+' : ''}{category.change}
-                </div>
-              </div>
-            </div>
-          ))}
+        <h4 className="font-medium text-gray-900">Clinical Interpretation:</h4>
+        <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+          <p className="text-blue-800 text-sm">{report.vossComparison.interpretation}</p>
         </div>
+      </div>
+
+      {/* VOSS Information */}
+      <div className="bg-gray-50 border border-gray-200 rounded-lg p-4">
+        <h4 className="font-medium text-gray-900 mb-2">About VOSS:</h4>
+        <ul className="space-y-1 text-sm text-gray-700">
+          <li>• Vanderbilt Orthostatic Symptom Score measures symptom burden in POTS</li>
+          <li>• Scores range from 0-90 (9 symptoms × 0-10 scale each)</li>
+          <li>• Higher scores indicate greater subjective symptom severity</li>
+          <li>• Useful for tracking symptom changes over time</li>
+        </ul>
       </div>
     </div>
   );
@@ -317,7 +313,7 @@ export function ReportViewScreen({ report, onBack, onDownload, onEmail, onShare 
           {activeSection === 'summary' && renderSummary()}
           {activeSection === 'baseline' && renderBaseline()}
           {activeSection === 'symptoms' && renderSymptoms()}
-          {activeSection === 'compass' && renderCompass()}
+          {activeSection === 'voss' && renderVoss()}
         </Card>
 
         <div className="text-center text-xs text-gray-500">
