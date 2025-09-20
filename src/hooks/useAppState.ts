@@ -75,7 +75,7 @@ export function useAppState() {
 
   const setMedications = useCallback((medications: Medication[]) => {
     updateState({ medications });
-        undefined
+  }, [updateState]);
 
   const setSupportPartner = useCallback((supportPartner: SupportPartner) => {
     updateState({ supportPartner });
@@ -85,6 +85,7 @@ export function useAppState() {
     updateState({ vossBaseline: responses });
   }, [updateState]);
 
+  const setVossFollowUp = useCallback((responses: VossResponse[]) => {
     updateState({ vossFollowUp: responses });
   }, [updateState]);
 
@@ -261,6 +262,8 @@ export function useAppState() {
 
   const shareReport = useCallback(() => {
     // TODO: Implement provider sharing
+    console.log('Share report functionality not implemented yet');
+  }, []);
 
   return {
     state,
@@ -273,6 +276,7 @@ export function useAppState() {
     setMedications,
     setSupportPartner,
     setVossBaseline,
+    setVossFollowUp,
     setLocationEnabled,
     setDeviceConnected,
     completeOnboarding,
