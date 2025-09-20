@@ -33,6 +33,37 @@ interface PatientData {
   }[];
 }
 
+interface PatientData {
+  id: string;
+  name: string;
+  patientCode: string;
+  averageHeartRate: number;
+  episodeCount: number;
+  heartRateRange: { min: number; max: number };
+  continuousHeartRateData: {
+    date: string;
+    averageHR: number;
+    minHR: number;
+    maxHR: number;
+  }[];
+  episodes: {
+    id: string;
+    date: string;
+    time: string;
+    duration: string;
+    symptoms: string[];
+    severity: number;
+    notes?: string;
+    heartRate?: number;
+  }[];
+  vossComparison: {
+    baselineScore: number;
+    followUpScore: number;
+    scoreDifference: number;
+    interpretation: string;
+  };
+}
+
 interface PatientDashboardScreenProps {
   patientId: string;
   onBack: () => void;
@@ -132,14 +163,12 @@ const mockPatientData: PatientData = {
     };
   }),
   episodes: generateEpisodes(),
-  compassResults: [
-    { category: 'Orthostatic Intolerance', score: 28, maxScore: 40 },
-    { category: 'Vasomotor', score: 12, maxScore: 20 },
-    { category: 'Secretomotor', score: 8, maxScore: 15 },
-    { category: 'Gastrointestinal', score: 15, maxScore: 25 },
-    { category: 'Bladder', score: 3, maxScore: 10 },
-    { category: 'Pupillomotor', score: 6, maxScore: 15 }
-  ]
+  vossComparison: {
+    baselineScore: 42,
+    followUpScore: 0, // No follow-up survey taken
+    scoreDifference: 0,
+    interpretation: 'Baseline VOSS score of 42/90 indicates moderate orthostatic symptom burden. No follow-up survey was completed.'
+  }
 };
 
 export function PatientDashboardScreen({ patientId, onBack }: PatientDashboardScreenProps) {
@@ -237,13 +266,13 @@ export function PatientDashboardScreen({ patientId, onBack }: PatientDashboardSc
       {/* Action Buttons */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <Button 
-          onClick={() => setActiveView('compass')}
+          onClick={() => setActiveView('voss')}
           variant="outline"
           size="lg"
           className="w-full"
         >
           <FileText className="w-5 h-5 mr-2" />
-          COMPASS-31 Results
+          VOSS Survey Results
         </Button>
         
         <Button 
@@ -259,10 +288,10 @@ export function PatientDashboardScreen({ patientId, onBack }: PatientDashboardSc
     </div>
   );
 
-  const renderCompassResults = () => (
+  const renderVossResults = () => (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
-        <h3 className="text-lg font-semibold text-gray-900">COMPASS-31 Survey Results</h3>
+        <h3 className="text-lg font-semibold text-gray-900">VOSS Survey Results</h3>
         <Button variant="ghost" onClick={() => setActiveView('dashboard')}>
           <ArrowLeft className="w-4 h-4 mr-2" />
           Back to Dashboard
@@ -270,41 +299,62 @@ export function PatientDashboardScreen({ patientId, onBack }: PatientDashboardSc
       </div>
 
       <Card className="p-6">
-        <div className="space-y-4">
+        <div className="space-y-6">
           <div className="text-center mb-6">
             <div className="text-3xl font-bold text-teal-600">
-              {patient.compassResults.reduce((sum, cat) => sum + cat.score, 0)}
+              {patient.vossComparison.baselineScore}
             </div>
-            <div className="text-gray-600">Total COMPASS-31 Score</div>
+            <div className="text-gray-600">VOSS Baseline Score</div>
             <div className="text-sm text-gray-500">
-              (out of {patient.compassResults.reduce((sum, cat) => sum + cat.maxScore, 0)} maximum)
+              (out of 90 maximum)
             </div>
           </div>
 
-          {patient.compassResults.map((category, index) => (
-            <div key={index} className="space-y-2">
-              <div className="flex justify-between items-center">
-                <span className="font-medium text-gray-900">{category.category}</span>
-                <span className="text-sm text-gray-600">{category.score}/{category.maxScore}</span>
-              </div>
-              <div className="w-full bg-gray-200 rounded-full h-2">
-                <div 
-                  className="bg-teal-600 h-2 rounded-full"
-                  style={{ width: `${(category.score / category.maxScore) * 100}%` }}
-                ></div>
-              </div>
+          {/* Score Visualization */}
+          <div className="space-y-3">
+            <h4 className="font-medium text-gray-900">Symptom Burden Level:</h4>
+            <div className="w-full bg-gray-200 rounded-full h-4">
+              <div 
+                className="bg-teal-600 h-4 rounded-full transition-all duration-500"
+                style={{ width: `${(patient.vossComparison.baselineScore / 90) * 100}%` }}
+              ></div>
             </div>
-          ))}
+            <div className="flex justify-between text-xs text-gray-500">
+              <span>0 - None</span>
+              <span>45 - Moderate</span>
+              <span>90 - Severe</span>
+            </div>
+          </div>
+
+          {/* Severity Classification */}
+          <div className="bg-teal-50 border border-teal-200 rounded-lg p-4">
+            <h4 className="font-medium text-teal-900 mb-2">Classification:</h4>
+            <div className={`inline-flex px-3 py-1 rounded-full text-sm font-medium ${
+              patient.vossComparison.baselineScore >= 45 ? 'bg-red-100 text-red-800' :
+              patient.vossComparison.baselineScore >= 25 ? 'bg-yellow-100 text-yellow-800' :
+              'bg-green-100 text-green-800'
+            }`}>
+              {patient.vossComparison.baselineScore >= 45 ? 'High Symptom Burden' :
+               patient.vossComparison.baselineScore >= 25 ? 'Moderate Symptom Burden' :
+               'Mild Symptom Burden'}
+            </div>
+          </div>
         </div>
       </Card>
 
       <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
         <h4 className="font-medium text-blue-900 mb-2">Clinical Interpretation:</h4>
-        <ul className="space-y-1 text-sm text-blue-800">
-          <li>• High orthostatic intolerance score suggests significant POTS symptoms</li>
-          <li>• Moderate gastrointestinal involvement noted</li>
-          <li>• Vasomotor symptoms present but mild</li>
-          <li>• Overall score indicates moderate autonomic dysfunction</li>
+        <p className="text-sm text-blue-800">{patient.vossComparison.interpretation}</p>
+      </div>
+
+      {/* VOSS Information */}
+      <div className="bg-gray-50 border border-gray-200 rounded-lg p-4">
+        <h4 className="font-medium text-gray-900 mb-2">About VOSS:</h4>
+        <ul className="space-y-1 text-sm text-gray-700">
+          <li>• Vanderbilt Orthostatic Symptom Score measures symptom burden in POTS</li>
+          <li>• Scores range from 0-90 (9 symptoms × 0-10 scale each)</li>
+          <li>• Higher scores indicate greater subjective symptom severity</li>
+          <li>• Provides baseline assessment of orthostatic symptoms</li>
         </ul>
       </div>
     </div>
