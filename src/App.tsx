@@ -21,7 +21,6 @@ import { SitLieDownScreen } from './components/screens/SitLieDownScreen';
 import { TimeToStandScreen } from './components/screens/TimeToStandScreen';
 import { DailyTestCompleteScreen } from './components/screens/DailyTestCompleteScreen';
 import { FiveDayCompleteScreen } from './components/screens/FiveDayCompleteScreen';
-import { PostBaselineCompassScreen } from './components/screens/PostBaselineCompassScreen';
 import { SymptomLogScreen } from './components/screens/SymptomLogScreen';
 import { ActiveEpisodeScreen } from './components/screens/ActiveEpisodeScreen';
 import { EpisodeCompleteScreen } from './components/screens/EpisodeCompleteScreen';
