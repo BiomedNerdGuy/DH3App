@@ -1,12 +1,12 @@
-import { MedicalReport, BaselineAnalysis, SymptomAnalysis, CompassComparison, DailyTest, Episode, SymptomEntry, CompassResponse, Patient } from '../types';
+import { MedicalReport, BaselineAnalysis, SymptomAnalysis, VossComparison, DailyTest, Episode, SymptomEntry, VossResponse, Patient } from '../types';
 
 export function generateMedicalReport(
   patient: Patient,
   dailyTests: DailyTest[],
   episodes: Episode[],
   symptoms: SymptomEntry[],
-  compassBaseline?: CompassResponse[],
-  compassFollowUp?: CompassResponse[]
+  vossBaseline?: VossResponse[],
+  vossFollowUp?: VossResponse[]
 ): MedicalReport {
   const reportPeriod = {
     startDate: dailyTests.length > 0 ? dailyTests[0].date : new Date().toISOString(),
@@ -15,8 +15,8 @@ export function generateMedicalReport(
 
   const baselineResults = analyzeBaselineData(dailyTests);
   const symptomAnalysis = analyzeSymptoms(episodes, symptoms);
-  const compassComparison = compareCompassScores(compassBaseline, compassFollowUp);
-  const recommendations = generateRecommendations(baselineResults, symptomAnalysis, compassComparison);
+  const vossComparison = compareVossScores(vossBaseline, vossFollowUp);
+  const recommendations = generateRecommendations(baselineResults, symptomAnalysis, vossComparison);
 
   return {
     id: crypto.randomUUID(),
@@ -25,7 +25,7 @@ export function generateMedicalReport(
     reportPeriod,
     baselineResults,
     symptomAnalysis,
-    compassComparison,
+    vossComparison,
     recommendations,
     rawData: {
       dailyTests,
@@ -131,33 +131,37 @@ function analyzeSymptoms(episodes: Episode[], symptoms: SymptomEntry[]): Symptom
   };
 }
 
-function compareCompassScores(baseline?: CompassResponse[], followUp?: CompassResponse[]): CompassComparison {
-  // Simplified COMPASS-31 scoring
+function compareVossScores(baseline?: VossResponse[], followUp?: VossResponse[]): VossComparison {
+  // VOSS scoring - sum of all 9 symptom scores (0-90 total)
   const baselineScore = baseline ? baseline.reduce((sum, response) => sum + response.value, 0) : 0;
   const followUpScore = followUp ? followUp.reduce((sum, response) => sum + response.value, 0) : 0;
   const scoreDifference = followUpScore - baselineScore;
 
-  const categoryChanges = [
-    { category: 'Orthostatic', baselineScore: 2, followUpScore: 3, change: 1 },
-    { category: 'Vasomotor', baselineScore: 1, followUpScore: 2, change: 1 },
-    { category: 'Secretomotor', baselineScore: 0, followUpScore: 1, change: 1 },
-    { category: 'Gastrointestinal', baselineScore: 3, followUpScore: 2, change: -1 },
-    { category: 'Bladder', baselineScore: 1, followUpScore: 1, change: 0 },
-    { category: 'Pupillomotor', baselineScore: 2, followUpScore: 3, change: 1 }
-  ];
+  let interpretation = '';
+  if (scoreDifference > 5) {
+    interpretation = 'Significant increase in symptom burden';
+  } else if (scoreDifference > 0) {
+    interpretation = 'Mild increase in symptom burden';
+  } else if (scoreDifference < -5) {
+    interpretation = 'Significant improvement in symptom burden';
+  } else if (scoreDifference < 0) {
+    interpretation = 'Mild improvement in symptom burden';
+  } else {
+    interpretation = 'No significant change in symptom burden';
+  }
 
   return {
     baselineScore,
     followUpScore,
     scoreDifference,
-    categoryChanges
+    interpretation
   };
 }
 
 function generateRecommendations(
   baseline: BaselineAnalysis,
   symptoms: SymptomAnalysis,
-  compass: CompassComparison
+  voss: VossComparison
 ): string[] {
   const recommendations = [];
 
@@ -169,8 +173,10 @@ function generateRecommendations(
     recommendations.push('Frequent symptom episodes documented - consider lifestyle modifications');
   }
 
-  if (compass.scoreDifference > 5) {
-    recommendations.push('COMPASS-31 scores show symptom progression - follow-up assessment recommended');
+  if (voss.scoreDifference > 5) {
+    recommendations.push('VOSS scores show symptom progression - follow-up assessment recommended');
+  } else if (voss.scoreDifference < -5) {
+    recommendations.push('VOSS scores show symptom improvement - current management appears effective');
   }
 
   recommendations.push('Continue symptom monitoring and maintain activity diary');

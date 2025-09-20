@@ -2,210 +2,182 @@ import React, { useState } from 'react';
 import { ArrowLeft, ArrowRight, CheckCircle, FileText } from 'lucide-react';
 import { Button } from '../ui/Button';
 import { Card } from '../ui/Card';
-import { CompassQuestion, CompassResponse } from '../../types';
+import { VossQuestion, VossResponse } from '../../types';
 
 interface PostBaselineCompassScreenProps {
-  onComplete: (responses: CompassResponse[]) => void;
+  onComplete: (responses: VossResponse[]) => void;
   onBack: () => void;
 }
 
-// Post-baseline COMPASS-31 questions as specified
-const postBaselineQuestions: CompassQuestion[] = [
+// Post-baseline VOSS questions (same as baseline)
+const postBaselineQuestions: VossQuestion[] = [
   {
-    id: 'ortho_1',
-    question: 'In the last year, have you at any time felt weak, dizzy or lightheaded, or had difficulty thinking after standing up from sitting or lying down?',
-    category: 'orthostatic',
+    id: 'q1',
+    question: 'Mental clouding ("brain fog")',
+    category: 'voss',
     options: [
-      { value: 0, label: 'No' },
-      { value: 1, label: 'Yes' }
+      { value: 0, label: '0 - None' },
+      { value: 1, label: '1' },
+      { value: 2, label: '2' },
+      { value: 3, label: '3' },
+      { value: 4, label: '4' },
+      { value: 5, label: '5' },
+      { value: 6, label: '6' },
+      { value: 7, label: '7' },
+      { value: 8, label: '8' },
+      { value: 9, label: '9' },
+      { value: 10, label: '10 - Worst imaginable' }
     ]
   },
   {
-    id: 'vaso_5',
-    question: 'In the last year, have you at any time noticed changes in the colour of your skin, e.g. it became red, white or purplish?',
-    category: 'vasomotor',
+    id: 'q2',
+    question: 'Blurred vision',
+    category: 'voss',
     options: [
-      { value: 0, label: 'No' },
-      { value: 1, label: 'Yes' }
+      { value: 0, label: '0 - None' },
+      { value: 1, label: '1' },
+      { value: 2, label: '2' },
+      { value: 3, label: '3' },
+      { value: 4, label: '4' },
+      { value: 5, label: '5' },
+      { value: 6, label: '6' },
+      { value: 7, label: '7' },
+      { value: 8, label: '8' },
+      { value: 9, label: '9' },
+      { value: 10, label: '10 - Worst imaginable' }
     ]
   },
   {
-    id: 'vaso_8',
-    question: 'In the last 5 years, what changes (if any) have occurred in your body perspiration?',
-    category: 'vasomotor',
+    id: 'q3',
+    question: 'Shortness of breath',
+    category: 'voss',
     options: [
-      { value: 0, label: 'I sweat much less than before' },
-      { value: 1, label: 'I sweat somewhat less than before' },
-      { value: 2, label: 'I haven\'t noticed any change' },
-      { value: 3, label: 'I sweat somewhat more than before' },
-      { value: 4, label: 'I sweat a lot more than before' }
+      { value: 0, label: '0 - None' },
+      { value: 1, label: '1' },
+      { value: 2, label: '2' },
+      { value: 3, label: '3' },
+      { value: 4, label: '4' },
+      { value: 5, label: '5' },
+      { value: 6, label: '6' },
+      { value: 7, label: '7' },
+      { value: 8, label: '8' },
+      { value: 9, label: '9' },
+      { value: 10, label: '10 - Worst imaginable' }
     ]
   },
   {
-    id: 'dry_9',
-    question: 'Do your eyes feel excessively dry?',
-    category: 'secretomotor',
+    id: 'q4',
+    question: 'Rapid heartbeat / palpitations',
+    category: 'voss',
     options: [
-      { value: 0, label: 'No' },
-      { value: 1, label: 'Yes' }
+      { value: 0, label: '0 - None' },
+      { value: 1, label: '1' },
+      { value: 2, label: '2' },
+      { value: 3, label: '3' },
+      { value: 4, label: '4' },
+      { value: 5, label: '5' },
+      { value: 6, label: '6' },
+      { value: 7, label: '7' },
+      { value: 8, label: '8' },
+      { value: 9, label: '9' },
+      { value: 10, label: '10 - Worst imaginable' }
     ]
   },
   {
-    id: 'dry_10',
-    question: 'Does your mouth feel excessively dry?',
-    category: 'secretomotor',
+    id: 'q5',
+    question: 'Tremulousness (shakiness)',
+    category: 'voss',
     options: [
-      { value: 0, label: 'No' },
-      { value: 1, label: 'Yes' }
+      { value: 0, label: '0 - None' },
+      { value: 1, label: '1' },
+      { value: 2, label: '2' },
+      { value: 3, label: '3' },
+      { value: 4, label: '4' },
+      { value: 5, label: '5' },
+      { value: 6, label: '6' },
+      { value: 7, label: '7' },
+      { value: 8, label: '8' },
+      { value: 9, label: '9' },
+      { value: 10, label: '10 - Worst imaginable' }
     ]
   },
   {
-    id: 'dry_11',
-    question: 'For the symptom of dry eyes or dry mouth that you have had for the longest period of time, is this symptom:',
-    category: 'secretomotor',
+    id: 'q6',
+    question: 'Chest discomfort',
+    category: 'voss',
     options: [
-      { value: 0, label: 'I have not had any of these symptoms' },
-      { value: 1, label: 'Getting much worse' },
-      { value: 2, label: 'Getting somewhat worse' },
-      { value: 3, label: 'Remaining the same' },
-      { value: 4, label: 'Getting somewhat better' },
-      { value: 5, label: 'Getting much better' }
+      { value: 0, label: '0 - None' },
+      { value: 1, label: '1' },
+      { value: 2, label: '2' },
+      { value: 3, label: '3' },
+      { value: 4, label: '4' },
+      { value: 5, label: '5' },
+      { value: 6, label: '6' },
+      { value: 7, label: '7' },
+      { value: 8, label: '8' },
+      { value: 9, label: '9' },
+      { value: 10, label: '10 - Worst imaginable' }
     ]
   },
   {
-    id: 'gi_12',
-    question: 'In the past year, have you noticed any changes in how quickly you get full when eating a meal?',
-    category: 'gastrointestinal',
+    id: 'q7',
+    question: 'Headache',
+    category: 'voss',
     options: [
-      { value: 0, label: 'I haven\'t noticed any change' },
-      { value: 1, label: 'I get full more quickly than before' },
-      { value: 2, label: 'I get full less quickly than before' }
+      { value: 0, label: '0 - None' },
+      { value: 1, label: '1' },
+      { value: 2, label: '2' },
+      { value: 3, label: '3' },
+      { value: 4, label: '4' },
+      { value: 5, label: '5' },
+      { value: 6, label: '6' },
+      { value: 7, label: '7' },
+      { value: 8, label: '8' },
+      { value: 9, label: '9' },
+      { value: 10, label: '10 - Worst imaginable' }
     ]
   },
   {
-    id: 'gi_13',
-    question: 'In the last year, have you felt excessively full or persistently full (bloated feeling) after meals?',
-    category: 'gastrointestinal',
+    id: 'q8',
+    question: 'Light-headedness / dizziness',
+    category: 'voss',
     options: [
-      { value: 0, label: 'Never' },
-      { value: 1, label: 'Occasionally' },
-      { value: 2, label: 'Frequently' },
-      { value: 3, label: 'Constantly' }
+      { value: 0, label: '0 - None' },
+      { value: 1, label: '1' },
+      { value: 2, label: '2' },
+      { value: 3, label: '3' },
+      { value: 4, label: '4' },
+      { value: 5, label: '5' },
+      { value: 6, label: '6' },
+      { value: 7, label: '7' },
+      { value: 8, label: '8' },
+      { value: 9, label: '9' },
+      { value: 10, label: '10 - Worst imaginable' }
     ]
   },
   {
-    id: 'gi_14',
-    question: 'In the past year, have you vomited after a meal?',
-    category: 'gastrointestinal',
+    id: 'q9',
+    question: 'Nausea',
+    category: 'voss',
     options: [
-      { value: 0, label: 'Never' },
-      { value: 1, label: 'Occasionally' },
-      { value: 2, label: 'Frequently' },
-      { value: 3, label: 'Constantly' }
-    ]
-  },
-  {
-    id: 'gi_15',
-    question: 'In the past year, have you had a cramping or colicky abdominal pain?',
-    category: 'gastrointestinal',
-    options: [
-      { value: 0, label: 'Never' },
-      { value: 1, label: 'Occasionally' },
-      { value: 2, label: 'Frequently' },
-      { value: 3, label: 'Constantly' }
-    ]
-  },
-  {
-    id: 'gi_16',
-    question: 'In the past year, have you had any episodes of diarrhoea?',
-    category: 'gastrointestinal',
-    options: [
-      { value: 0, label: 'No' },
-      { value: 1, label: 'Yes' }
-    ]
-  },
-  {
-    id: 'gi_20',
-    question: 'In the past year, have you been constipated?',
-    category: 'gastrointestinal',
-    options: [
-      { value: 0, label: 'No' },
-      { value: 1, label: 'Yes' }
-    ]
-  },
-  {
-    id: 'bladder_24',
-    question: 'In the last year, have you at any time lost bladder control?',
-    category: 'bladder',
-    options: [
-      { value: 0, label: 'Never' },
-      { value: 1, label: 'Occasionally' },
-      { value: 2, label: 'Frequently' },
-      { value: 3, label: 'Constantly' }
-    ]
-  },
-  {
-    id: 'bladder_25',
-    question: 'In the last year, have you had difficulty passing urine?',
-    category: 'bladder',
-    options: [
-      { value: 0, label: 'Never' },
-      { value: 1, label: 'Occasionally' },
-      { value: 2, label: 'Frequently' },
-      { value: 3, label: 'Constantly' }
-    ]
-  },
-  {
-    id: 'bladder_26',
-    question: 'In the past year, have you had trouble completely emptying your bladder?',
-    category: 'bladder',
-    options: [
-      { value: 0, label: 'Never' },
-      { value: 1, label: 'Occasionally' },
-      { value: 2, label: 'Frequently' },
-      { value: 3, label: 'Constantly' }
-    ]
-  },
-  {
-    id: 'pupil_27',
-    question: 'In the last year, have you been bothered by bright light in your eyes when you were not wearing sunglasses or tinted glasses?',
-    category: 'pupillomotor',
-    options: [
-      { value: 0, label: 'Never' },
-      { value: 1, label: 'Occasionally' },
-      { value: 2, label: 'Frequently' },
-      { value: 3, label: 'Constantly' }
-    ]
-  },
-  {
-    id: 'pupil_29',
-    question: 'In the last year, have you had any problems focusing your eyes?',
-    category: 'pupillomotor',
-    options: [
-      { value: 0, label: 'Never' },
-      { value: 1, label: 'Occasionally' },
-      { value: 2, label: 'Frequently' },
-      { value: 3, label: 'Constantly' }
-    ]
-  },
-  {
-    id: 'pupil_31',
-    question: 'Is the most troublesome symptom with your eyes (i.e. sensitivity to bright light or trouble focusing):',
-    category: 'pupillomotor',
-    options: [
-      { value: 0, label: 'I have not had these symptoms' },
-      { value: 1, label: 'Getting much worse' },
-      { value: 2, label: 'Getting somewhat worse' },
-      { value: 3, label: 'Remaining the same' },
-      { value: 4, label: 'Getting somewhat better' },
-      { value: 5, label: 'Getting much better' }
+      { value: 0, label: '0 - None' },
+      { value: 1, label: '1' },
+      { value: 2, label: '2' },
+      { value: 3, label: '3' },
+      { value: 4, label: '4' },
+      { value: 5, label: '5' },
+      { value: 6, label: '6' },
+      { value: 7, label: '7' },
+      { value: 8, label: '8' },
+      { value: 9, label: '9' },
+      { value: 10, label: '10 - Worst imaginable' }
     ]
   }
 ];
 
 export function PostBaselineCompassScreen({ onComplete, onBack }: PostBaselineCompassScreenProps) {
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
-  const [responses, setResponses] = useState<CompassResponse[]>([]);
+  const [responses, setResponses] = useState<VossResponse[]>([]);
   const [selectedValue, setSelectedValue] = useState<number | null>(null);
 
   const currentQuestion = postBaselineQuestions[currentQuestionIndex];
@@ -219,7 +191,7 @@ export function PostBaselineCompassScreen({ onComplete, onBack }: PostBaselineCo
   const handleNext = () => {
     if (selectedValue === null) return;
 
-    const newResponse: CompassResponse = {
+    const newResponse: VossResponse = {
       questionId: currentQuestion.id,
       value: selectedValue,
       timestamp: new Date().toISOString()
@@ -257,7 +229,7 @@ export function PostBaselineCompassScreen({ onComplete, onBack }: PostBaselineCo
             <ArrowLeft className="w-5 h-5" />
           </Button>
           <h1 className="text-xl font-semibold text-gray-900">
-            Follow-up Survey
+            Follow-up VOSS Survey
           </h1>
         </div>
 
@@ -281,39 +253,38 @@ export function PostBaselineCompassScreen({ onComplete, onBack }: PostBaselineCo
             <div className="bg-teal-50 border border-teal-200 rounded-lg p-4">
               <div className="flex items-center space-x-2 mb-2">
                 <FileText className="w-5 h-5 text-teal-600" />
-                <p className="font-medium text-teal-900">Follow-up Assessment</p>
+                <p className="font-medium text-teal-900">Follow-up VOSS Assessment</p>
               </div>
               <p className="text-teal-800 text-sm">
-                Now that you've completed your 5-day baseline testing, we'd like to assess your current symptoms. 
-                This helps us understand how your symptoms may have changed.
+                Now that you've completed your 5-day baseline testing, please rate your current orthostatic symptoms again. 
+                This helps us understand how your symptom burden may have changed.
               </p>
             </div>
           )}
 
           {/* Question */}
           <div className="space-y-4">
-            <h2 className="text-lg font-medium text-gray-900 leading-relaxed">
+            <h2 className="text-xl font-semibold text-gray-900 leading-relaxed">
               {currentQuestion.question}
             </h2>
+            <p className="text-sm text-gray-600">Rate from 0 (none) to 10 (worst imaginable)</p>
 
             {/* Answer Options */}
-            <div className="space-y-3">
+            <div className="grid grid-cols-2 gap-2">
               {currentQuestion.options.map((option) => (
                 <button
                   key={option.value}
                   onClick={() => handleAnswerSelect(option.value)}
-                  className={`w-full p-4 text-left border-2 rounded-lg transition-colors ${
+                  className={`p-3 text-center border-2 rounded-lg transition-colors ${
                     selectedValue === option.value
                       ? 'border-teal-500 bg-teal-50 text-teal-900'
                       : 'border-gray-200 bg-white text-gray-700 hover:border-gray-300'
                   }`}
                 >
-                  <div className="flex items-center justify-between">
-                    <span className="font-medium text-sm">{option.label}</span>
-                    {selectedValue === option.value && (
-                      <CheckCircle className="w-5 h-5 text-teal-600" />
-                    )}
-                  </div>
+                  <span className="font-medium text-sm">{option.label}</span>
+                  {selectedValue === option.value && (
+                    <CheckCircle className="w-4 h-4 text-teal-600 mx-auto mt-1" />
+                  )}
                 </button>
               ))}
             </div>
@@ -334,14 +305,14 @@ export function PostBaselineCompassScreen({ onComplete, onBack }: PostBaselineCo
               onClick={handleNext}
               disabled={selectedValue === null}
             >
-              {isLastQuestion ? 'Complete Survey' : 'Next'}
+              {isLastQuestion ? 'Complete VOSS Survey' : 'Next'}
               {!isLastQuestion && <ArrowRight className="w-4 h-4 ml-2" />}
             </Button>
           </div>
         </Card>
 
         <div className="text-center text-xs text-gray-500">
-          <p>This follow-up assessment helps track your symptom changes</p>
+          <p>This follow-up VOSS assessment helps track changes in your symptom burden</p>
         </div>
       </div>
     </div>

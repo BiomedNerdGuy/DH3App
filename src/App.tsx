@@ -41,8 +41,8 @@ function App() {
     setPatient,
     setMedications,
     setSupportPartner,
-    setCompassBaseline,
-    setCompassFollowUp,
+    setVossBaseline,
+    setVossFollowUp,
     setLocationEnabled,
     setDeviceConnected,
     completeOnboarding,
@@ -135,8 +135,8 @@ function App() {
     setCurrentScreen('compass-survey');
   };
 
-  const handleCompassComplete = (responses: any[]) => {
-    setCompassBaseline(responses);
+  const handleVossComplete = (responses: any[]) => {
+    setVossBaseline(responses);
     setCurrentScreen('medications');
   };
 
@@ -207,8 +207,8 @@ function App() {
     setCurrentScreen('post-baseline-compass');
   };
 
-  const handlePostBaselineCompassComplete = (responses: any[]) => {
-    setCompassFollowUp(responses);
+  const handlePostBaselineVossComplete = (responses: any[]) => {
+    setVossFollowUp(responses);
     generateReport();
   };
   const handleReportReady = () => {
@@ -219,8 +219,8 @@ function App() {
         state.dailyTests,
         state.episodes,
         state.symptoms,
-        state.compassBaseline,
-        state.compassFollowUp
+        state.vossBaseline,
+        state.vossFollowUp
       );
       
       // Store report data in state
@@ -401,7 +401,7 @@ function App() {
     case 'compass-survey':
       return (
         <CompassSurveyScreen 
-          onComplete={handleCompassComplete}
+          onComplete={handleVossComplete}
           onBack={handleBack}
           isBaseline={true}
         />
@@ -504,7 +504,7 @@ function App() {
     case 'post-baseline-compass':
       return (
         <PostBaselineCompassScreen 
-          onComplete={handlePostBaselineCompassComplete}
+          onComplete={handlePostBaselineVossComplete}
           onBack={handleBack}
         />
       );

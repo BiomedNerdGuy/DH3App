@@ -1,5 +1,5 @@
 import { useState, useCallback } from 'react';
-import { AppState, Patient, Medication, SupportPartner, CompassResponse } from '../types';
+import { AppState, Patient, Medication, SupportPartner, VossResponse } from '../types';
 
 const initialState: AppState = {
   currentScreen: 'launch',
@@ -12,7 +12,7 @@ const initialState: AppState = {
   totalBaselineDays: 5,
   currentTestStep: 'intro',
   medications: [],
-  compassFollowUp: undefined,
+  vossFollowUp: undefined,
   locationEnabled: false,
   episodes: [],
   symptoms: [],
@@ -81,12 +81,12 @@ export function useAppState() {
     updateState({ supportPartner });
   }, [updateState]);
 
-  const setCompassBaseline = useCallback((responses: CompassResponse[]) => {
-    updateState({ compassBaseline: responses });
+  const setVossBaseline = useCallback((responses: VossResponse[]) => {
+    updateState({ vossBaseline: responses });
   }, [updateState]);
 
-  const setCompassFollowUp = useCallback((responses: CompassResponse[]) => {
-    updateState({ compassFollowUp: responses });
+  const setVossFollowUp = useCallback((responses: VossResponse[]) => {
+    updateState({ vossFollowUp: responses });
   }, [updateState]);
 
   const setLocationEnabled = useCallback((enabled: boolean) => {
@@ -275,8 +275,8 @@ export function useAppState() {
     setPatient,
     setMedications,
     setSupportPartner,
-    setCompassBaseline,
-    setCompassFollowUp,
+    setVossBaseline,
+    setVossFollowUp,
     setLocationEnabled,
     setDeviceConnected,
     completeOnboarding,

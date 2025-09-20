@@ -28,19 +28,19 @@ export interface SupportPartner {
   inviteStatus: 'pending' | 'accepted' | 'declined';
 }
 
-export interface CompassQuestion {
+export interface VossQuestion {
   id: string;
   question: string;
   category: string;
-  options: CompassOption[];
+  options: VossOption[];
 }
 
-export interface CompassOption {
+export interface VossOption {
   value: number;
   label: string;
 }
 
-export interface CompassResponse {
+export interface VossResponse {
   questionId: string;
   value: number;
   textValue?: string;
@@ -90,8 +90,8 @@ export interface AppState {
   currentDay: number;
   totalBaselineDays: number;
   currentTestStep: 'intro' | 'sit-lie' | 'stand' | 'complete';
-  compassBaseline?: CompassResponse[];
-  compassFollowUp?: CompassResponse[];
+  vossBaseline?: VossResponse[];
+  vossFollowUp?: VossResponse[];
   medications: Medication[];
   supportPartner?: SupportPartner;
   locationEnabled: boolean;
@@ -111,7 +111,7 @@ export interface MedicalReport {
   };
   baselineResults: BaselineAnalysis;
   symptomAnalysis: SymptomAnalysis;
-  compassComparison: CompassComparison;
+  vossComparison: VossComparison;
   recommendations: string[];
   rawData: {
     dailyTests: DailyTest[];
@@ -151,16 +151,11 @@ export interface SymptomAnalysis {
   triggerPatterns: string[];
 }
 
-export interface CompassComparison {
+export interface VossComparison {
   baselineScore: number;
   followUpScore: number;
   scoreDifference: number;
-  categoryChanges: {
-    category: string;
-    baselineScore: number;
-    followUpScore: number;
-    change: number;
-  }[];
+  interpretation: string;
 }
 
 export interface SymptomEntry {
