@@ -1,0 +1,14 @@
+# Core web framework
+Flask==3.0.3
+gunicorn==21.2.0
+
+# Firebase Admin SDK (includes Firestore client)
+firebase-admin==6.3.0
+
+# Google Cloud Firestore (stable release)
+google-cloud-firestore==2.11.0
+
+# Requests library (stable release)
+requests==2.32.3
+flask-cors
+
