@@ -29,8 +29,8 @@ export function TimeToStandScreen({ onComplete, onCancel }: TimeToStandScreenPro
       interval = setInterval(() => {
         setTimeRemaining(time => {
           const newTime = time - 1;
-          // Pause at 3 minutes total (60 seconds remaining in standing) for BP reading
-          if (newTime === 60 && !state.isBPPromptVisible) {
+          // Pause at 3 minutes total (120 seconds remaining in standing) for BP reading
+          if (newTime === 120 && !state.isBPPromptVisible) {
             showBPPrompt('standing');
             return newTime; // Don't decrement further
           }
