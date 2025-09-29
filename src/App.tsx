@@ -353,6 +353,7 @@ function App() {
       return (
         <PatientDashboardScreen 
           patientId={state.selectedPatientId || ''}
+          patientDailyTests={state.patientDailyTests}
           onBack={() => setCurrentScreen('clinician-home')}
         />
       );

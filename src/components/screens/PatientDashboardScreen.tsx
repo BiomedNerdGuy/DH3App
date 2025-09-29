@@ -3,6 +3,7 @@ import { ArrowLeft, Heart, Activity, TrendingUp, FileText, Clock, MapPin, Gauge 
 import { Button } from '../ui/Button';
 import { Card } from '../ui/Card';
 import { BPReading } from '../../types';
+import { DailyTestHeartRateGraph } from '../charts/DailyTestHeartRateGraph';
 
 // Real heart rate data from provided dataset
 const heartRateData = [
@@ -278,6 +279,7 @@ interface PatientData {
 interface PatientDashboardScreenProps {
   patientId: string;
   onBack: () => void;
+  patientDailyTests: Record<string, any[]>;
 }
 
 const mockPatientData: PatientData = {
@@ -367,13 +369,17 @@ const mockPatientData: PatientData = {
   }
 };
 
-export function PatientDashboardScreen({ patientId, onBack }: PatientDashboardScreenProps) {
+export function PatientDashboardScreen({ patientId, onBack, patientDailyTests }: PatientDashboardScreenProps) {
   const [activeView, setActiveView] = useState<'dashboard' | 'compass' | 'episodes'>('dashboard');
   const patient = mockPatientData; // In real app, would fetch by patientId
 
+  // Get daily tests for this patient
+  const patientTests = patientDailyTests[patientId] || [];
+
   // Calculate BP averages
-  const lyingBP = patient.bpReadings.filter(bp => bp.position === 'lying');
-  const standingBP = patient.bpReadings.filter(bp => bp.position === 'standing');
+  const allBPReadings = patientTests.flatMap(test => test.bpReadings || []);
+  const lyingBP = allBPReadings.filter(bp => bp.position === 'lying');
+  const standingBP = allBPReadings.filter(bp => bp.position === 'standing');
   
   const avgLyingBP = lyingBP.length > 0 ? {
     systolic: Math.round(lyingBP.reduce((sum, bp) => sum + bp.systolic, 0) / lyingBP.length),
@@ -432,48 +438,20 @@ export function PatientDashboardScreen({ patientId, onBack }: PatientDashboardSc
       </div>
 
       {/* Blood Pressure Trends */}
-      <Card className="p-6">
-        <h3 className="text-lg font-semibold text-gray-900 mb-4">Blood Pressure Measurements</h3>
-        <div className="space-y-4">
-          {patient.bpReadings.reduce((acc, bp, index) => {
-            if (bp.position === 'lying') {
-              const standingBP = patient.bpReadings.find(
-                (standingReading, standingIndex) => 
-                  standingReading.position === 'standing' && 
-                  standingIndex === index + 1
-              );
-              
-              if (standingBP) {
-                const day = Math.floor(acc.length) + 1;
-                acc.push(
-                  <div key={`day-${day}`} className="bg-gray-50 rounded-lg p-4">
-                    <div className="flex justify-between items-center mb-2">
-                      <span className="font-medium text-gray-900">Day {day}</span>
-                      <span className="text-sm text-gray-600">
-                        {new Date(bp.timestamp).toLocaleDateString()}
-                      </span>
-                    </div>
-                    <div className="grid grid-cols-2 gap-4 text-sm">
-                      <div className="bg-purple-50 rounded p-3">
-                        <span className="text-purple-700 font-medium">Lying: </span>
-                        <span className="font-bold text-purple-900">{bp.systolic}/{bp.diastolic}</span>
-                      </div>
-                      <div className="bg-orange-50 rounded p-3">
-                        <span className="text-orange-700 font-medium">Standing: </span>
-                        <span className="font-bold text-orange-900">{standingBP.systolic}/{standingBP.diastolic}</span>
-                      </div>
-                    </div>
-                    <div className="mt-2 text-xs text-gray-600">
-                      Change: +{standingBP.systolic - bp.systolic}/{standingBP.diastolic - bp.diastolic} mmHg
-                    </div>
-                  </div>
-                );
-              }
-            }
-            return acc;
-          }, [] as JSX.Element[])}
-        </div>
-      </Card>
+      {patientTests.length > 0 && (
+        <Card className="p-6">
+          <h3 className="text-lg font-semibold text-gray-900 mb-4">Daily Test Results</h3>
+          <div className="space-y-6">
+            {patientTests.map((test, index) => (
+              <DailyTestHeartRateGraph 
+                key={test.id} 
+                dailyTest={test} 
+                dayNumber={index + 1} 
+              />
+            ))}
+          </div>
+        </Card>
+      )}
 
       {/* Heart Rate & Episode Graph */}
       <Card className="p-6">

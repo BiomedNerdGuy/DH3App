@@ -78,6 +78,7 @@ export interface BPReading {
 
 export interface DailyTest {
   id: string;
+  patientId: string;
   date: string;
   completed: boolean;
   heartRateReadings: HeartRateReading[];
@@ -95,6 +96,7 @@ export interface AppState {
   deviceConnected: boolean;
   currentEpisode?: Episode;
   dailyTests: DailyTest[];
+  patientDailyTests: Record<string, DailyTest[]>;
   currentDay: number;
   totalBaselineDays: number;
   currentTestStep: 'intro' | 'sit-lie' | 'stand' | 'complete';
