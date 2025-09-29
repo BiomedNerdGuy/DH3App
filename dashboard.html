@@ -353,43 +353,26 @@
                 const data = await response.json();
                 console.log('Raw API data:', data);
                 
-                // Filter and format heart rate data
+                // More flexible filtering - check for heart rate value
                 const filteredData = data
-                    .filter(d => d.dataType === 'heartrate' && d.heartRate)
+                    .filter(d => {
+                        // Check if it has a heartRate field with a valid value
+                        const hasHeartRate = d.heartRate && d.heartRate > 0;
+                        // Also check dataType if it exists
+                        const isHeartRateType = !d.dataType || d.dataType === 'heartrate';
+                        return hasHeartRate && isHeartRateType;
+                    })
                     .map(d => ({
                         timestamp: d.timestamp || d.serverTimestamp,
                         heartRate: parseInt(d.heartRate),
-                        deviceId: d.device || d.deviceId
+                        deviceId: d.device || d.deviceId || 'unknown'
                     }))
                     .sort((a, b) => new Date(a.timestamp) - new Date(b.timestamp));
                 
                 console.log('Filtered data:', filteredData);
                 
-                // Apply time range filter
-                const now = new Date();
-                let cutoffTime;
-                
-                switch(timeRange) {
-                    case '1h':
-                        cutoffTime = new Date(now - 60 * 60 * 1000);
-                        break;
-                    case '6h':
-                        cutoffTime = new Date(now - 6 * 60 * 60 * 1000);
-                        break;
-                    case '24h':
-                        cutoffTime = new Date(now - 24 * 60 * 60 * 1000);
-                        break;
-                    case '7d':
-                        cutoffTime = new Date(now - 7 * 24 * 60 * 60 * 1000);
-                        break;
-                    default:
-                        cutoffTime = new Date(now - 24 * 60 * 60 * 1000);
-                }
-                
-                const timeFilteredData = filteredData.filter(d => new Date(d.timestamp) >= cutoffTime);
-                console.log('Time filtered data:', timeFilteredData);
-                
-                return timeFilteredData;
+                // Remove strict time filtering for now - show all available data
+                return filteredData;
                     
             } catch (error) {
                 console.error('Error fetching heart rate data:', error);
