@@ -1,30 +1,6 @@
 import { useState, useCallback } from 'react';
 import { AppState, Patient, Medication, SupportPartner, VossResponse, BPReading, DailyTest, HeartRateReading } from '../types';
 
-const initialState: AppState = {
-  currentScreen: 'launch',
-  isClinicianMode: false,
-  selectedPatientId: undefined,
-  onboardingComplete: false,
-  deviceConnected: false,
-  dailyTests: [],
-  patientDailyTests: {},
-  currentDay: 1,
-  totalBaselineDays: 5,
-  currentTestStep: 'intro',
-  medications: [],
-  vossFollowUp: undefined,
-  locationEnabled: false,
-  episodes: [],
-  symptoms: [],
-  reportGenerated: false,
-  isBPPromptVisible: false,
-  currentBPPosition: undefined,
-  bpSystolic: '',
-  bpDiastolic: '',
-  tempBPReadings: [],
-};
-
 // Helper function to generate mock daily test data
 function generateMockDailyTestData(patientId: string, day: number): DailyTest {
   const testDate = new Date(Date.now() - (5 - day) * 24 * 60 * 60 * 1000);
@@ -91,6 +67,45 @@ function generateMockDailyTestData(patientId: string, day: number): DailyTest {
   };
 }
 
+// Helper function to generate all mock patient daily tests
+function generateAllMockPatientDailyTests(): Record<string, DailyTest[]> {
+  const patientIds = ['1', '2', '3', '4']; // Sarah Johnson, Michael Chen, Emily Rodriguez, David Thompson
+  const patientDailyTests: Record<string, DailyTest[]> = {};
+  
+  patientIds.forEach(patientId => {
+    patientDailyTests[patientId] = [];
+    for (let day = 1; day <= 5; day++) {
+      patientDailyTests[patientId].push(generateMockDailyTestData(patientId, day));
+    }
+  });
+  
+  return patientDailyTests;
+}
+
+const initialState: AppState = {
+  currentScreen: 'launch',
+  isClinicianMode: false,
+  selectedPatientId: undefined,
+  onboardingComplete: false,
+  deviceConnected: false,
+  dailyTests: [],
+  patientDailyTests: generateAllMockPatientDailyTests(),
+  currentDay: 1,
+  totalBaselineDays: 5,
+  currentTestStep: 'intro',
+  medications: [],
+  vossFollowUp: undefined,
+  locationEnabled: false,
+  episodes: [],
+  symptoms: [],
+  reportGenerated: false,
+  isBPPromptVisible: false,
+  currentBPPosition: undefined,
+  bpSystolic: '',
+  bpDiastolic: '',
+  tempBPReadings: [],
+};
+
 export function useAppState() {
   const [state, setState] = useState<AppState>(initialState);
 
@@ -100,20 +115,10 @@ export function useAppState() {
 
   const loginUser = useCallback(() => {
     const mockPatientId = '3'; // Emily Rodriguez
-    const mockDailyTests = [
-      generateMockDailyTestData(mockPatientId, 1),
-      generateMockDailyTestData(mockPatientId, 2),
-      generateMockDailyTestData(mockPatientId, 3),
-      generateMockDailyTestData(mockPatientId, 4),
-      generateMockDailyTestData(mockPatientId, 5)
-    ];
     
     updateState({ 
       onboardingComplete: true, 
       currentScreen: 'home',
-      patientDailyTests: {
-        [mockPatientId]: mockDailyTests
-      },
       // Simulate returning user with some existing data
       currentDay: 3, // Example: user is on day 3
       dailyTests: [
