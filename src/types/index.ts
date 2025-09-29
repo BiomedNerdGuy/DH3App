@@ -69,11 +69,19 @@ export interface HeartRateReading {
   position: 'lying' | 'sitting' | 'standing';
 }
 
+export interface BPReading {
+  timestamp: string;
+  systolic: number;
+  diastolic: number;
+  position: 'lying' | 'standing';
+}
+
 export interface DailyTest {
   id: string;
   date: string;
   completed: boolean;
   heartRateReadings: HeartRateReading[];
+  bpReadings: BPReading[];
   notes?: string;
 }
 
@@ -99,6 +107,11 @@ export interface AppState {
   symptoms: SymptomEntry[];
   reportGenerated: boolean;
   reportData?: MedicalReport;
+  isBPPromptVisible: boolean;
+  currentBPPosition?: 'lying' | 'standing';
+  bpSystolic: string;
+  bpDiastolic: string;
+  tempBPReadings: BPReading[];
 }
 
 export interface MedicalReport {

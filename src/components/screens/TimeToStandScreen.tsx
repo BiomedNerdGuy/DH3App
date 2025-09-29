@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { CheckCircle, Heart, X } from 'lucide-react';
 import { Button } from '../ui/Button';
+import { Input } from '../ui/Input';
 import { Card } from '../ui/Card';
+import { useAppState } from '../../hooks/useAppState';
 
 interface TimeToStandScreenProps {
   onComplete: () => void;
@@ -11,6 +13,9 @@ interface TimeToStandScreenProps {
 export function TimeToStandScreen({ onComplete, onCancel }: TimeToStandScreenProps) {
   const [timeRemaining, setTimeRemaining] = useState(180); // 3 minutes in seconds
   const [isActive, setIsActive] = useState(false);
+  const { state, showBPPrompt, recordBPReading } = useAppState();
+  const [bpSystolic, setBpSystolic] = useState('');
+  const [bpDiastolic, setBpDiastolic] = useState('');
 
   useEffect(() => {
     // Auto-start the timer when component mounts
@@ -20,18 +25,37 @@ export function TimeToStandScreen({ onComplete, onCancel }: TimeToStandScreenPro
   useEffect(() => {
     let interval: NodeJS.Timeout | null = null;
     
-    if (isActive && timeRemaining > 0) {
+    if (isActive && timeRemaining > 0 && !state.isBPPromptVisible) {
       interval = setInterval(() => {
-        setTimeRemaining(time => time - 1);
+        setTimeRemaining(time => {
+          const newTime = time - 1;
+          // Pause at 3 minutes total (60 seconds remaining in standing) for BP reading
+          if (newTime === 60 && !state.isBPPromptVisible) {
+            showBPPrompt('standing');
+            return newTime; // Don't decrement further
+          }
+          return newTime;
+        });
       }, 1000);
-    } else if (timeRemaining === 0) {
+    } else if (timeRemaining === 0 && !state.isBPPromptVisible) {
       setIsActive(false);
     }
 
     return () => {
       if (interval) clearInterval(interval);
     };
-  }, [isActive, timeRemaining]);
+  }, [isActive, timeRemaining, state.isBPPromptVisible, showBPPrompt]);
+
+  const handleBPSubmit = () => {
+    const systolic = parseInt(bpSystolic);
+    const diastolic = parseInt(bpDiastolic);
+    
+    if (systolic && diastolic && systolic > 0 && diastolic > 0) {
+      recordBPReading(systolic, diastolic, 'standing');
+      setBpSystolic('');
+      setBpDiastolic('');
+    }
+  };
 
   const formatTime = (seconds: number) => {
     const mins = Math.floor(seconds / 60);
@@ -132,6 +156,50 @@ export function TimeToStandScreen({ onComplete, onCancel }: TimeToStandScreenPro
             </div>
           )}
         </Card>
+
+        {/* Blood Pressure Prompt */}
+        {state.isBPPromptVisible && state.currentBPPosition === 'standing' && (
+          <Card className="border-2 border-blue-500 bg-blue-50">
+            <div className="space-y-4">
+              <div className="text-center">
+                <h3 className="text-lg font-semibold text-blue-900">Blood Pressure Reading</h3>
+                <p className="text-blue-800 text-sm">
+                  Please take your blood pressure reading now while remaining standing.
+                </p>
+              </div>
+              
+              <div className="grid grid-cols-2 gap-4">
+                <Input
+                  label="Systolic (top number)"
+                  type="number"
+                  value={bpSystolic}
+                  onChange={(e) => setBpSystolic(e.target.value)}
+                  placeholder="120"
+                  min="50"
+                  max="250"
+                />
+                <Input
+                  label="Diastolic (bottom number)"
+                  type="number"
+                  value={bpDiastolic}
+                  onChange={(e) => setBpDiastolic(e.target.value)}
+                  placeholder="80"
+                  min="30"
+                  max="150"
+                />
+              </div>
+              
+              <Button 
+                onClick={handleBPSubmit}
+                disabled={!bpSystolic || !bpDiastolic}
+                size="lg"
+                className="w-full"
+              >
+                Record Blood Pressure
+              </Button>
+            </div>
+          </Card>
+        )}
 
         <div className="text-center text-xs text-gray-500">
           <p>Step 2 of 2 • Recording standing heart rate</p>

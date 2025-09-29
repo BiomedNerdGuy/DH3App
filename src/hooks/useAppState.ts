@@ -1,5 +1,5 @@
 import { useState, useCallback } from 'react';
-import { AppState, Patient, Medication, SupportPartner, VossResponse } from '../types';
+import { AppState, Patient, Medication, SupportPartner, VossResponse, BPReading, DailyTest } from '../types';
 
 const initialState: AppState = {
   currentScreen: 'launch',
@@ -17,6 +17,11 @@ const initialState: AppState = {
   episodes: [],
   symptoms: [],
   reportGenerated: false,
+  isBPPromptVisible: false,
+  currentBPPosition: undefined,
+  bpSystolic: '',
+  bpDiastolic: '',
+  tempBPReadings: [],
 };
 
 export function useAppState() {
@@ -38,6 +43,7 @@ export function useAppState() {
           date: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
           completed: true,
           heartRateReadings: [],
+          bpReadings: [],
           notes: 'Day 1 baseline test completed'
         },
         {
@@ -45,6 +51,7 @@ export function useAppState() {
           date: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
           completed: true,
           heartRateReadings: [],
+          bpReadings: [],
           notes: 'Day 2 baseline test completed'
         }
       ]
@@ -129,6 +136,7 @@ export function useAppState() {
         date: new Date().toISOString().split('T')[0],
         completed: true,
         heartRateReadings: [], // Placeholder - would be populated with real data
+        bpReadings: [...prev.tempBPReadings],
         notes: `Day ${prev.currentDay} baseline test completed`
       };
 
@@ -150,7 +158,8 @@ export function useAppState() {
           dailyTests: updatedDailyTests,
           currentDay: nextDay,
           currentScreen: 'home',
-          currentTestStep: 'intro'
+          currentTestStep: 'intro',
+          tempBPReadings: []
         };
       }
     });
@@ -163,9 +172,41 @@ export function useAppState() {
   const cancelDailyTest = useCallback(() => {
     updateState({ 
       currentScreen: 'home',
-      currentTestStep: 'intro'
+      currentTestStep: 'intro',
+      tempBPReadings: [],
+      isBPPromptVisible: false,
+      currentBPPosition: undefined,
+      bpSystolic: '',
+      bpDiastolic: ''
     });
   }, [updateState]);
+
+  const showBPPrompt = useCallback((position: 'lying' | 'standing') => {
+    updateState({
+      isBPPromptVisible: true,
+      currentBPPosition: position,
+      bpSystolic: '',
+      bpDiastolic: ''
+    });
+  }, [updateState]);
+
+  const recordBPReading = useCallback((systolic: number, diastolic: number, position: 'lying' | 'standing') => {
+    const newBPReading: BPReading = {
+      timestamp: new Date().toISOString(),
+      systolic,
+      diastolic,
+      position
+    };
+
+    setState(prev => ({
+      ...prev,
+      tempBPReadings: [...prev.tempBPReadings, newBPReading],
+      isBPPromptVisible: false,
+      currentBPPosition: undefined,
+      bpSystolic: '',
+      bpDiastolic: ''
+    }));
+  }, []);
 
   const logSymptom = useCallback((symptomData: any) => {
     const newSymptom = {
@@ -296,5 +337,7 @@ export function useAppState() {
     downloadReport,
     emailReport,
     shareReport,
+    showBPPrompt,
+    recordBPReading,
   };
 }

@@ -47,13 +47,25 @@ export function IntroToTestScreen({ currentDay, totalDays, onStartTest, onBack }
                 <div className="w-6 h-6 bg-teal-200 rounded-full flex items-center justify-center flex-shrink-0">
                   <span className="text-teal-800 text-sm font-medium">2</span>
                 </div>
-                <p className="text-teal-800 text-sm">Stand up and remain standing for 3 minutes</p>
+                <p className="text-teal-800 text-sm">Take blood pressure reading at 1-minute mark while seated/lying</p>
               </div>
               <div className="flex items-center space-x-3">
                 <div className="w-6 h-6 bg-teal-200 rounded-full flex items-center justify-center flex-shrink-0">
                   <span className="text-teal-800 text-sm font-medium">3</span>
                 </div>
-                <p className="text-teal-800 text-sm">Your heart rate monitor will record the data</p>
+                <p className="text-teal-800 text-sm">Stand up and remain standing for 3 minutes</p>
+              </div>
+              <div className="flex items-center space-x-3">
+                <div className="w-6 h-6 bg-teal-200 rounded-full flex items-center justify-center flex-shrink-0">
+                  <span className="text-teal-800 text-sm font-medium">4</span>
+                </div>
+                <p className="text-teal-800 text-sm">Take blood pressure reading at 3-minute mark while standing</p>
+              </div>
+              <div className="flex items-center space-x-3">
+                <div className="w-6 h-6 bg-teal-200 rounded-full flex items-center justify-center flex-shrink-0">
+                  <span className="text-teal-800 text-sm font-medium">5</span>
+                </div>
+                <p className="text-teal-800 text-sm">Your heart rate monitor will record the data continuously</p>
               </div>
             </div>
           </div>
@@ -63,9 +75,10 @@ export function IntroToTestScreen({ currentDay, totalDays, onStartTest, onBack }
             <h3 className="font-medium text-blue-900 mb-2">Before we start:</h3>
             <ul className="space-y-1 text-sm text-blue-800">
               <li>• Make sure your heart rate monitor is connected</li>
+              <li>• Have your blood pressure cuff securely attached to your bicep and ready for use</li>
               <li>• Find a quiet space where you won't be interrupted</li>
               <li>• Have a chair or comfortable surface nearby</li>
-              <li>• The test takes about 5 minutes total</li>
+              <li>• The test takes about 6-7 minutes total (including BP measurements)</li>
             </ul>
           </div>
 

@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
-import { ArrowLeft, Heart, Activity, TrendingUp, FileText, Clock, MapPin } from 'lucide-react';
+import { ArrowLeft, Heart, Activity, TrendingUp, FileText, Clock, MapPin, Gauge } from 'lucide-react';
 import { Button } from '../ui/Button';
 import { Card } from '../ui/Card';
+import { BPReading } from '../../types';
 
 // Real heart rate data from provided dataset
 const heartRateData = [
@@ -256,6 +257,8 @@ interface PatientData {
   heartRateRange: { min: number; max: number };
   episodes: {
     id: string;
+    date: string;
+    time: string;
     duration: string;
     symptoms: string[];
     severity: number;
@@ -263,6 +266,7 @@ interface PatientData {
     activityType?: string;
     otherDetails?: string;
   }[];
+  bpReadings: BPReading[];
   vossComparison: {
     baselineScore: number;
     followUpScore: number;
@@ -289,6 +293,8 @@ const mockPatientData: PatientData = {
   episodes: [
     {
       id: 'episode-1',
+      date: '2024-01-15',
+      time: '09:30 AM',
       duration: '18 min',
       symptoms: ['Dizziness', 'Palpitations'],
       severity: 7,
@@ -298,6 +304,8 @@ const mockPatientData: PatientData = {
     },
     {
       id: 'episode-2',
+      date: '2024-01-16',
+      time: '01:15 PM',
       duration: '25 min',
       symptoms: ['Lightheaded', 'Fatigue'],
       severity: 6,
@@ -307,6 +315,8 @@ const mockPatientData: PatientData = {
     },
     {
       id: 'episode-3',
+      date: '2024-01-17',
+      time: '07:45 PM',
       duration: '32 min',
       symptoms: ['Dizziness', 'Brain Fog', 'Tremor'],
       severity: 8,
@@ -316,6 +326,8 @@ const mockPatientData: PatientData = {
     },
     {
       id: 'episode-4',
+      date: '2024-01-18',
+      time: '10:20 AM',
       duration: '15 min',
       symptoms: ['Palpitations', 'Chest Pain'],
       severity: 7,
@@ -325,6 +337,8 @@ const mockPatientData: PatientData = {
     },
     {
       id: 'episode-5',
+      date: '2024-01-19',
+      time: '03:30 PM',
       duration: '22 min',
       symptoms: ['Dizziness', 'Shortness of Breath'],
       severity: 6,
@@ -332,6 +346,18 @@ const mockPatientData: PatientData = {
       activityType: 'Walking outside',
       otherDetails: 'Hot weather may have been a contributing factor'
     }
+  ],
+  bpReadings: [
+    { timestamp: '2024-01-15T09:00:00Z', systolic: 110, diastolic: 70, position: 'lying' },
+    { timestamp: '2024-01-15T09:03:00Z', systolic: 125, diastolic: 85, position: 'standing' },
+    { timestamp: '2024-01-16T09:00:00Z', systolic: 108, diastolic: 68, position: 'lying' },
+    { timestamp: '2024-01-16T09:03:00Z', systolic: 130, diastolic: 88, position: 'standing' },
+    { timestamp: '2024-01-17T09:00:00Z', systolic: 112, diastolic: 72, position: 'lying' },
+    { timestamp: '2024-01-17T09:03:00Z', systolic: 128, diastolic: 86, position: 'standing' },
+    { timestamp: '2024-01-18T09:00:00Z', systolic: 115, diastolic: 75, position: 'lying' },
+    { timestamp: '2024-01-18T09:03:00Z', systolic: 135, diastolic: 92, position: 'standing' },
+    { timestamp: '2024-01-19T09:00:00Z', systolic: 109, diastolic: 69, position: 'lying' },
+    { timestamp: '2024-01-19T09:03:00Z', systolic: 132, diastolic: 89, position: 'standing' }
   ],
   vossComparison: {
     baselineScore: 42,
@@ -345,10 +371,24 @@ export function PatientDashboardScreen({ patientId, onBack }: PatientDashboardSc
   const [activeView, setActiveView] = useState<'dashboard' | 'compass' | 'episodes'>('dashboard');
   const patient = mockPatientData; // In real app, would fetch by patientId
 
+  // Calculate BP averages
+  const lyingBP = patient.bpReadings.filter(bp => bp.position === 'lying');
+  const standingBP = patient.bpReadings.filter(bp => bp.position === 'standing');
+  
+  const avgLyingBP = lyingBP.length > 0 ? {
+    systolic: Math.round(lyingBP.reduce((sum, bp) => sum + bp.systolic, 0) / lyingBP.length),
+    diastolic: Math.round(lyingBP.reduce((sum, bp) => sum + bp.diastolic, 0) / lyingBP.length)
+  } : null;
+  
+  const avgStandingBP = standingBP.length > 0 ? {
+    systolic: Math.round(standingBP.reduce((sum, bp) => sum + bp.systolic, 0) / standingBP.length),
+    diastolic: Math.round(standingBP.reduce((sum, bp) => sum + bp.diastolic, 0) / standingBP.length)
+  } : null;
+
   const renderDashboard = () => (
     <div className="space-y-6">
       {/* Summary Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
         <Card className="p-4 text-center">
           <div className="flex items-center justify-center space-x-2 mb-2">
             <Heart className="w-5 h-5 text-teal-600" />
@@ -360,6 +400,28 @@ export function PatientDashboardScreen({ patientId, onBack }: PatientDashboardSc
 
         <Card className="p-4 text-center">
           <div className="flex items-center justify-center space-x-2 mb-2">
+            <Gauge className="w-5 h-5 text-purple-600" />
+            <h3 className="font-medium text-gray-900">Average BP (Lying)</h3>
+          </div>
+          <div className="text-2xl font-bold text-purple-600">
+            {avgLyingBP ? `${avgLyingBP.systolic}/${avgLyingBP.diastolic}` : 'N/A'}
+          </div>
+          <div className="text-sm text-gray-600">Baseline measurements</div>
+        </Card>
+
+        <Card className="p-4 text-center">
+          <div className="flex items-center justify-center space-x-2 mb-2">
+            <Gauge className="w-5 h-5 text-orange-600" />
+            <h3 className="font-medium text-gray-900">Average BP (Standing)</h3>
+          </div>
+          <div className="text-2xl font-bold text-orange-600">
+            {avgStandingBP ? `${avgStandingBP.systolic}/${avgStandingBP.diastolic}` : 'N/A'}
+          </div>
+          <div className="text-sm text-gray-600">Orthostatic measurements</div>
+        </Card>
+
+        <Card className="p-4 text-center">
+          <div className="flex items-center justify-center space-x-2 mb-2">
             <Activity className="w-5 h-5 text-red-600" />
             <h3 className="font-medium text-gray-900">Episodes Logged</h3>
           </div>
@@ -367,17 +429,51 @@ export function PatientDashboardScreen({ patientId, onBack }: PatientDashboardSc
           <div className="text-sm text-gray-600">During monitoring period</div>
         </Card>
 
-        <Card className="p-4 text-center">
-          <div className="flex items-center justify-center space-x-2 mb-2">
-            <TrendingUp className="w-5 h-5 text-blue-600" />
-            <h3 className="font-medium text-gray-900">Heart Rate Range</h3>
-          </div>
-          <div className="text-2xl font-bold text-blue-600">
-            {patient.heartRateRange.min}-{patient.heartRateRange.max}
-          </div>
-          <div className="text-sm text-gray-600">During sit/stand tests</div>
-        </Card>
       </div>
+
+      {/* Blood Pressure Trends */}
+      <Card className="p-6">
+        <h3 className="text-lg font-semibold text-gray-900 mb-4">Blood Pressure Measurements</h3>
+        <div className="space-y-4">
+          {patient.bpReadings.reduce((acc, bp, index) => {
+            if (bp.position === 'lying') {
+              const standingBP = patient.bpReadings.find(
+                (standingReading, standingIndex) => 
+                  standingReading.position === 'standing' && 
+                  standingIndex === index + 1
+              );
+              
+              if (standingBP) {
+                const day = Math.floor(acc.length) + 1;
+                acc.push(
+                  <div key={`day-${day}`} className="bg-gray-50 rounded-lg p-4">
+                    <div className="flex justify-between items-center mb-2">
+                      <span className="font-medium text-gray-900">Day {day}</span>
+                      <span className="text-sm text-gray-600">
+                        {new Date(bp.timestamp).toLocaleDateString()}
+                      </span>
+                    </div>
+                    <div className="grid grid-cols-2 gap-4 text-sm">
+                      <div className="bg-purple-50 rounded p-3">
+                        <span className="text-purple-700 font-medium">Lying: </span>
+                        <span className="font-bold text-purple-900">{bp.systolic}/{bp.diastolic}</span>
+                      </div>
+                      <div className="bg-orange-50 rounded p-3">
+                        <span className="text-orange-700 font-medium">Standing: </span>
+                        <span className="font-bold text-orange-900">{standingBP.systolic}/{standingBP.diastolic}</span>
+                      </div>
+                    </div>
+                    <div className="mt-2 text-xs text-gray-600">
+                      Change: +{standingBP.systolic - bp.systolic}/{standingBP.diastolic - bp.diastolic} mmHg
+                    </div>
+                  </div>
+                );
+              }
+            }
+            return acc;
+          }, [] as JSX.Element[])}
+        </div>
+      </Card>
 
       {/* Heart Rate & Episode Graph */}
       <Card className="p-6">

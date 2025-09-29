@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { ArrowRight, Heart, X } from 'lucide-react';
 import { Button } from '../ui/Button';
+import { Input } from '../ui/Input';
 import { Card } from '../ui/Card';
+import { useAppState } from '../../hooks/useAppState';
 
 interface SitLieDownScreenProps {
   onNext: () => void;
@@ -11,6 +13,9 @@ interface SitLieDownScreenProps {
 export function SitLieDownScreen({ onNext, onCancel }: SitLieDownScreenProps) {
   const [timeRemaining, setTimeRemaining] = useState(120); // 2 minutes in seconds
   const [isActive, setIsActive] = useState(false);
+  const { state, showBPPrompt, recordBPReading, updateState } = useAppState();
+  const [bpSystolic, setBpSystolic] = useState('');
+  const [bpDiastolic, setBpDiastolic] = useState('');
 
   useEffect(() => {
     // Auto-start the timer when component mounts
@@ -20,18 +25,37 @@ export function SitLieDownScreen({ onNext, onCancel }: SitLieDownScreenProps) {
   useEffect(() => {
     let interval: NodeJS.Timeout | null = null;
     
-    if (isActive && timeRemaining > 0) {
+    if (isActive && timeRemaining > 0 && !state.isBPPromptVisible) {
       interval = setInterval(() => {
-        setTimeRemaining(time => time - 1);
+        setTimeRemaining(time => {
+          const newTime = time - 1;
+          // Pause at 1 minute (60 seconds remaining) for BP reading
+          if (newTime === 60 && !state.isBPPromptVisible) {
+            showBPPrompt('lying');
+            return newTime; // Don't decrement further
+          }
+          return newTime;
+        });
       }, 1000);
-    } else if (timeRemaining === 0) {
+    } else if (timeRemaining === 0 && !state.isBPPromptVisible) {
       setIsActive(false);
     }
 
     return () => {
       if (interval) clearInterval(interval);
     };
-  }, [isActive, timeRemaining]);
+  }, [isActive, timeRemaining, state.isBPPromptVisible, showBPPrompt]);
+
+  const handleBPSubmit = () => {
+    const systolic = parseInt(bpSystolic);
+    const diastolic = parseInt(bpDiastolic);
+    
+    if (systolic && diastolic && systolic > 0 && diastolic > 0) {
+      recordBPReading(systolic, diastolic, 'lying');
+      setBpSystolic('');
+      setBpDiastolic('');
+    }
+  };
 
   const formatTime = (seconds: number) => {
     const mins = Math.floor(seconds / 60);
@@ -125,6 +149,50 @@ export function SitLieDownScreen({ onNext, onCancel }: SitLieDownScreenProps) {
             </div>
           )}
         </Card>
+
+        {/* Blood Pressure Prompt */}
+        {state.isBPPromptVisible && state.currentBPPosition === 'lying' && (
+          <Card className="border-2 border-blue-500 bg-blue-50">
+            <div className="space-y-4">
+              <div className="text-center">
+                <h3 className="text-lg font-semibold text-blue-900">Blood Pressure Reading</h3>
+                <p className="text-blue-800 text-sm">
+                  Please take your blood pressure reading now while remaining seated/lying down.
+                </p>
+              </div>
+              
+              <div className="grid grid-cols-2 gap-4">
+                <Input
+                  label="Systolic (top number)"
+                  type="number"
+                  value={bpSystolic}
+                  onChange={(e) => setBpSystolic(e.target.value)}
+                  placeholder="120"
+                  min="50"
+                  max="250"
+                />
+                <Input
+                  label="Diastolic (bottom number)"
+                  type="number"
+                  value={bpDiastolic}
+                  onChange={(e) => setBpDiastolic(e.target.value)}
+                  placeholder="80"
+                  min="30"
+                  max="150"
+                />
+              </div>
+              
+              <Button 
+                onClick={handleBPSubmit}
+                disabled={!bpSystolic || !bpDiastolic}
+                size="lg"
+                className="w-full"
+              >
+                Record Blood Pressure
+              </Button>
+            </div>
+          </Card>
+        )}
 
         <div className="text-center text-xs text-gray-500">
           <p>Step 1 of 2 • Recording baseline heart rate</p>
