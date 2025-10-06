@@ -456,7 +456,7 @@ function App() {
 
     case 'sit-lie-down':
       return (
-        <SitLieDownScreen 
+        <SitLieDownScreen
           onNext={handleNextTestStep}
           onCancel={cancelDailyTest}
         />
@@ -481,16 +481,8 @@ function App() {
 
     case 'five-day-complete':
       return (
-        <FiveDayCompleteScreen 
+        <FiveDayCompleteScreen
           onContinue={handleFiveDayComplete}
-        />
-      );
-
-    case 'post-baseline-compass':
-      return (
-        <PostBaselineCompassScreen 
-          onComplete={handlePostBaselineVossComplete}
-          onBack={handleBack}
         />
       );
 
