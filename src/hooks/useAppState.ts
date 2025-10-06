@@ -1,5 +1,8 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import { AppState, Patient, Medication, SupportPartner, VossResponse, BPReading, DailyTest, HeartRateReading } from '../types';
+import { getAllPatients } from '../services/patientService';
+import { getDailyTestsByPatientId } from '../services/dailyTestService';
+import { getEpisodesByPatientId, getSymptomLogsByPatientId } from '../services/episodeService';
 
 // Helper function to generate mock daily test data
 function generateMockDailyTestData(patientId: string, day: number): DailyTest {
@@ -89,7 +92,7 @@ const initialState: AppState = {
   onboardingComplete: false,
   deviceConnected: false,
   dailyTests: [],
-  patientDailyTests: generateAllMockPatientDailyTests(),
+  patientDailyTests: {},
   currentDay: 1,
   totalBaselineDays: 5,
   currentTestStep: 'intro',
@@ -108,6 +111,45 @@ const initialState: AppState = {
 
 export function useAppState() {
   const [state, setState] = useState<AppState>(initialState);
+  const [isLoading, setIsLoading] = useState(false);
+
+  useEffect(() => {
+    loadInitialData();
+  }, []);
+
+  const loadInitialData = async () => {
+    setIsLoading(true);
+    try {
+      const patients = await getAllPatients();
+
+      if (patients && patients.length > 0) {
+        const patientDailyTestsData: Record<string, DailyTest[]> = {};
+
+        for (const patient of patients) {
+          const dailyTests = await getDailyTestsByPatientId(patient.id);
+          patientDailyTestsData[patient.id] = dailyTests;
+        }
+
+        setState(prev => ({
+          ...prev,
+          patientDailyTests: patientDailyTestsData
+        }));
+      } else {
+        setState(prev => ({
+          ...prev,
+          patientDailyTests: generateAllMockPatientDailyTests()
+        }));
+      }
+    } catch (error) {
+      console.error('Error loading initial data:', error);
+      setState(prev => ({
+        ...prev,
+        patientDailyTests: generateAllMockPatientDailyTests()
+      }));
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   const updateState = useCallback((updates: Partial<AppState>) => {
     setState(prev => ({ ...prev, ...updates }));
@@ -400,8 +442,28 @@ export function useAppState() {
     console.log('Share report functionality not implemented yet');
   }, []);
 
+  const loadPatientData = useCallback(async (patientId: string) => {
+    try {
+      const [dailyTests, episodes, symptoms] = await Promise.all([
+        getDailyTestsByPatientId(patientId),
+        getEpisodesByPatientId(patientId),
+        getSymptomLogsByPatientId(patientId)
+      ]);
+
+      setState(prev => ({
+        ...prev,
+        dailyTests,
+        episodes,
+        symptoms
+      }));
+    } catch (error) {
+      console.error('Error loading patient data:', error);
+    }
+  }, []);
+
   return {
     state,
+    isLoading,
     updateState,
     setCurrentScreen,
     loginClinician,
@@ -433,5 +495,6 @@ export function useAppState() {
     shareReport,
     showBPPrompt,
     recordBPReading,
+    loadPatientData,
   };
 }
